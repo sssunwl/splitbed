@@ -6,9 +6,31 @@ function applyTheme(theme: Theme): void {
   document.documentElement.dataset.theme = theme;
 }
 
+/**
+ * Reads the saved theme. Storage access throws in private or storage-blocked
+ * contexts, so every read and write is guarded and falls back to the system
+ * preference rather than breaking the nav.
+ */
+function readSavedTheme(): Theme | null {
+  try {
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    return savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeSavedTheme(theme: Theme): void {
+  try {
+    writeSavedTheme(theme);
+  } catch {
+    // Storage unavailable: the toggle still works for this page view.
+  }
+}
+
 function getInitialTheme(): Theme {
-  const savedTheme = localStorage.getItem(THEME_KEY);
-  if (savedTheme === 'light' || savedTheme === 'dark') {
+  const savedTheme = readSavedTheme();
+  if (savedTheme !== null) {
     return savedTheme;
   }
 
@@ -49,7 +71,7 @@ export function mountNav(): void {
 
   button.addEventListener('click', () => {
     theme = theme === 'dark' ? 'light' : 'dark';
-    localStorage.setItem(THEME_KEY, theme);
+    writeSavedTheme(theme);
     update();
   });
 
