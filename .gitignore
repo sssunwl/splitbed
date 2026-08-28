@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.env
+.env.*
+__pycache__/
+
+# 商業策略文件 —— 只留本機，不推上 public repo
+docs/05-sapporo-baseline.md
+docs/06-multi-tenancy-and-ingestion.md
+handoff/
