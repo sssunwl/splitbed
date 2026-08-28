@@ -8,3 +8,12 @@ Smart Room & Bed Allocation — 給 Hostel / Guesthouse / 員工宿舍 / 滑雪�
 建議交員工確認，系統不會自行改房。
 
 規格見 `docs/`。開發從 Phase 0（引擎 + 模擬器，無 DB 無 UI）開始，見 `docs/03-roadmap.md`。
+
+## 開發指令
+
+```sh
+npm install
+npm run dev
+npm run build
+npm test
+```
