@@ -13,6 +13,9 @@ export function evaluate(
   weights: Weights,
   placements: readonly Placement[],
 ): ObjectiveBreakdown {
+  const activeBookings = problem.bookings.filter(
+    (booking) => booking.cancelled !== true && booking.noShow !== true,
+  );
   const roomByGuestId = new Map(placements.map((placement) => [placement.guestId, placement.roomId]));
   const guestsByBookingId = new Map<string, string[]>();
   for (const guest of problem.guests) {
@@ -21,16 +24,16 @@ export function evaluate(
     guestsByBookingId.set(guest.bookingId, guestIds);
   }
 
-  const rejectedBookings = problem.bookings.filter((booking) => {
+  const rejectedBookings = activeBookings.filter((booking) => {
     const guestIds = guestsByBookingId.get(booking.id) ?? [];
     return guestIds.length > 0 && guestIds.some((guestId) => !roomByGuestId.has(guestId));
   });
-  const allValuesAreZero = problem.bookings.every((booking) => booking.totalValue === 0);
+  const allValuesAreZero = activeBookings.every((booking) => booking.totalValue === 0);
   const averageValue =
-    problem.bookings.length === 0
+    activeBookings.length === 0
       ? 0
-      : problem.bookings.reduce((sum, booking) => sum + booking.totalValue, 0) /
-        problem.bookings.length;
+      : activeBookings.reduce((sum, booking) => sum + booking.totalValue, 0) /
+        activeBookings.length;
   const rejectedValueUnits = rejectedBookings.reduce(
     (sum, booking) => sum + (allValuesAreZero ? 1 : booking.totalValue / averageValue),
     0,

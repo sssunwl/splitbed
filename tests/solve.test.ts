@@ -214,6 +214,88 @@ describe('solve', () => {
     expect(result.placements).toContainEqual({ guestId: testGuest.id, roomId: roomB.id });
   });
 
+  it('ignores a cancelled booking without placing or rejecting it', () => {
+    const testRoom = room('room-a', 1);
+    const cancelledBooking = booking('booking-cancelled', { cancelled: true });
+    const cancelledGuest = guest('guest-cancelled', cancelledBooking.id);
+    const result = solve(
+      problem([testRoom], beds(testRoom.id, 1), [cancelledBooking], [cancelledGuest]),
+      defaultOptions,
+    );
+    expect(result.placements).toEqual([]);
+    expect(result.rejectedBookingIds).toEqual([]);
+  });
+
+  it('does not let a cancelled booking occupy capacity', () => {
+    const testRoom = room('room-a', 1);
+    const cancelledBooking = booking('booking-cancelled', { cancelled: true });
+    const activeBooking = booking('booking-active');
+    const cancelledGuest = guest('guest-cancelled', cancelledBooking.id);
+    const activeGuest = guest('guest-active', activeBooking.id);
+    const result = solve(
+      problem(
+        [testRoom],
+        beds(testRoom.id, 1),
+        [cancelledBooking, activeBooking],
+        [cancelledGuest, activeGuest],
+      ),
+      defaultOptions,
+    );
+    expect(result.placements).toEqual([{ guestId: activeGuest.id, roomId: testRoom.id }]);
+    expect(result.rejectedBookingIds).toEqual([]);
+  });
+
+  it('does not let a cancelled booking lock a same_gender room', () => {
+    const testRoom = room('room-a', 1);
+    const cancelledBooking = booking('booking-cancelled', { cancelled: true });
+    const activeBooking = booking('booking-active');
+    const cancelledGuest = guest('guest-cancelled', cancelledBooking.id, 'female');
+    const activeGuest = guest('guest-active', activeBooking.id, 'male');
+    const result = solve(
+      problem(
+        [testRoom],
+        beds(testRoom.id, 2),
+        [cancelledBooking, activeBooking],
+        [cancelledGuest, activeGuest],
+      ),
+      defaultOptions,
+    );
+    expect(result.placements).toEqual([{ guestId: activeGuest.id, roomId: testRoom.id }]);
+    expect(result.rejectedBookingIds).toEqual([]);
+  });
+
+  it('ignores a no-show booking without placing or rejecting it', () => {
+    const testRoom = room('room-a', 1);
+    const noShowBooking = booking('booking-no-show', { noShow: true });
+    const noShowGuest = guest('guest-no-show', noShowBooking.id);
+    const result = solve(
+      problem([testRoom], beds(testRoom.id, 1), [noShowBooking], [noShowGuest]),
+      defaultOptions,
+    );
+    expect(result.placements).toEqual([]);
+    expect(result.rejectedBookingIds).toEqual([]);
+  });
+
+  it('ignores a hard current assignment from a cancelled booking', () => {
+    const testRoom = room('room-a', 1);
+    const cancelledBooking = booking('booking-cancelled', { cancelled: true });
+    const activeBooking = booking('booking-active');
+    const cancelledGuest = guest('guest-cancelled', cancelledBooking.id);
+    const activeGuest = guest('guest-active', activeBooking.id);
+    const result = solve(
+      problem(
+        [testRoom],
+        beds(testRoom.id, 1),
+        [cancelledBooking, activeBooking],
+        [cancelledGuest, activeGuest],
+        [assignment(cancelledGuest.id, testRoom.id, 'hard')],
+      ),
+      defaultOptions,
+    );
+    expect(result.placements).toEqual([{ guestId: activeGuest.id, roomId: testRoom.id }]);
+    expect(result.rejectedBookingIds).toEqual([]);
+  });
+
   it('never exceeds nightly capacity or mixes genders in same_gender rooms', () => {
     const roomA = room('room-a', 1);
     const roomB = room('room-b', 2);

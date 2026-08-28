@@ -274,19 +274,33 @@ function shuffleBookings(bookings: readonly Booking[], random: () => number): Bo
 
 /** Solves a room allocation problem with greedy placement and deterministic local search. */
 export function solve(problem: AllocationProblem, options: SolveOptions): SolveResult {
+  const activeBookings = problem.bookings.filter(
+    (booking) => booking.cancelled !== true && booking.noShow !== true,
+  );
+  const activeBookingIds = new Set(activeBookings.map((booking) => booking.id));
+  const activeGuests = problem.guests.filter((guest) => activeBookingIds.has(guest.bookingId));
+  const activeGuestIds = new Set(activeGuests.map((guest) => guest.id));
+  const activeProblem: AllocationProblem = {
+    ...problem,
+    bookings: activeBookings,
+    guests: activeGuests,
+    currentAssignments: problem.currentAssignments.filter((assignment) =>
+      activeGuestIds.has(assignment.guestId),
+    ),
+  };
   const weights = options.weights ?? DEFAULT_WEIGHTS;
   const maxPasses = options.maxPasses ?? 20;
   const seed = options.seed ?? 42;
   const allowReject = options.allowReject ?? true;
   void allowReject;
 
-  const state = new AllocationState(problem);
-  const rooms = sortedRooms(problem.rooms);
-  const bookings = sortedBookings(problem);
+  const state = new AllocationState(activeProblem);
+  const rooms = sortedRooms(activeProblem.rooms);
+  const bookings = sortedBookings(activeProblem);
   const roomByGuestId = new Map<string, string>();
   const initialDiagnostics = new Map<string, Diagnostic>();
 
-  const guestsById = new Map(problem.guests.map((guest) => [guest.id, guest]));
+  const guestsById = new Map(activeProblem.guests.map((guest) => [guest.id, guest]));
   for (const [guestId, roomId] of state.hardLockedRoomByGuestId) {
     const guest = guestsById.get(guestId);
     if (guest !== undefined) {
@@ -295,7 +309,7 @@ export function solve(problem: AllocationProblem, options: SolveOptions): SolveR
   }
 
   for (const booking of bookings) {
-    const bookingGuests = guestsForBooking(problem, booking.id);
+    const bookingGuests = guestsForBooking(activeProblem, booking.id);
     const movableGuests = bookingGuests.filter(
       (guest) => !state.hardLockedRoomByGuestId.has(guest.id),
     );
@@ -310,7 +324,7 @@ export function solve(problem: AllocationProblem, options: SolveOptions): SolveR
     );
     const groupChoice = testRooms(
       state,
-      problem,
+      activeProblem,
       weights,
       roomByGuestId,
       movableGuests,
@@ -327,7 +341,7 @@ export function solve(problem: AllocationProblem, options: SolveOptions): SolveR
       for (const guest of movableGuests) {
         const choice = testRooms(
           state,
-          problem,
+          activeProblem,
           weights,
           roomByGuestId,
           [guest],
@@ -346,7 +360,10 @@ export function solve(problem: AllocationProblem, options: SolveOptions): SolveR
       removeGuests(state, roomByGuestId, individuallyPlaced);
     }
 
-    initialDiagnostics.set(booking.id, diagnosticFor(state, problem, booking.id, rooms));
+    initialDiagnostics.set(
+      booking.id,
+      diagnosticFor(state, activeProblem, booking.id, rooms),
+    );
   }
 
   const random = mulberry32(seed);
@@ -354,7 +371,7 @@ export function solve(problem: AllocationProblem, options: SolveOptions): SolveR
   for (; passes < maxPasses; passes += 1) {
     const currentTotal = evaluate(
       state,
-      problem,
+      activeProblem,
       weights,
       placementList(roomByGuestId),
     ).total;
@@ -362,7 +379,7 @@ export function solve(problem: AllocationProblem, options: SolveOptions): SolveR
     let bestTotal = currentTotal;
 
     for (const booking of shuffleBookings(bookings, random)) {
-      const bookingGuests = guestsForBooking(problem, booking.id);
+      const bookingGuests = guestsForBooking(activeProblem, booking.id);
       const movableGuests = bookingGuests.filter(
         (guest) => !state.hardLockedRoomByGuestId.has(guest.id),
       );
@@ -378,7 +395,7 @@ export function solve(problem: AllocationProblem, options: SolveOptions): SolveR
       );
       const choice = testRooms(
         state,
-        problem,
+        activeProblem,
         weights,
         roomByGuestId,
         movableGuests,
@@ -404,13 +421,15 @@ export function solve(problem: AllocationProblem, options: SolveOptions): SolveR
   const placedGuestIds = new Set(placements.map((placement) => placement.guestId));
   const rejectedBookingIds = bookings
     .filter((booking) =>
-      guestsForBooking(problem, booking.id).some((guest) => !placedGuestIds.has(guest.id)),
+      guestsForBooking(activeProblem, booking.id).some(
+        (guest) => !placedGuestIds.has(guest.id),
+      ),
     )
     .map((booking) => booking.id)
     .sort(compareIds);
   const forcedSplitBookingIds = bookings
     .filter((booking) => {
-      const bookingGuests = guestsForBooking(problem, booking.id);
+      const bookingGuests = guestsForBooking(activeProblem, booking.id);
       if (
         bookingGuests.length === 0 ||
         bookingGuests.some((guest) => !roomByGuestId.has(guest.id))
@@ -422,12 +441,12 @@ export function solve(problem: AllocationProblem, options: SolveOptions): SolveR
     .map((booking) => booking.id)
     .sort(compareIds);
   const diagnostics = rejectedBookingIds.map((bookingId) => {
-    const finalDiagnostic = diagnosticFor(state, problem, bookingId, rooms);
+    const finalDiagnostic = diagnosticFor(state, activeProblem, bookingId, rooms);
     return finalDiagnostic.perRoom.length === rooms.length
       ? finalDiagnostic
       : (initialDiagnostics.get(bookingId) ?? finalDiagnostic);
   });
-  const breakdown = evaluate(state, problem, weights, placements);
+  const breakdown = evaluate(state, activeProblem, weights, placements);
 
   return {
     placements,
