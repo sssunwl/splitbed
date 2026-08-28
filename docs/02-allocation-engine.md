@@ -76,6 +76,24 @@ chg[g] ∈ {0,1}     guest g 的安排與 current_assignment 不同
 CP-SAT 寫法：`model.AddImplication(a[g,r], m[r,d])`，
 gender=unspecified 的 guest **不觸發** m 或 f。
 
+> **實作者必讀：`same_gender` 是動態鎖，房間沒有永久性別欄位。**
+> `m` 與 `f` 帶 **date 維度**，意思是「這間房**在這一晚**有男/女客」。
+> 房間一旦在某晚完全無人，該晚就沒有任何鎖，可以自由收男或收女。
+>
+> 例：Room A 在 12/20–12/23 住了 2 位女客 → 這 4 晚鎖 Female；
+> 12/24 全部退房 → 12/24 起立即回復自由，可以收男客。
+>
+> **不要在 Room 上加一個 `currentGender` 之類的欄位去記錄狀態。**
+> 鎖是「誰住在裡面」推導出來的結果，不是要儲存的資料。
+> 真正永久鎖性別的只有 `female_only` / `male_only`（H4），那是管理員設定的。
+>
+> 因為用 `[from, to)` 左閉右開，女客 12/24 退房 = 最後一晚是 12/23，
+> 男客 12/24 入住不會撞。這個 off-by-one 是同類系統最常見的 bug。
+>
+> **陷阱**：鎖雖然會自動解，但只要有一個人未走就解不了。
+> 一位住 14 晚的女客佔住 4 床房 → 3 張空床被鎖 Female 共 42 個 stranded bed-nights。
+> 這正是 §4.2 `W_FRAGMENT` 要把長住客集中的原因。
+
 **H4 固定性別房**
 ```
 pol(r,·) == female_only → ∀g male:   a[g,r] = 0
