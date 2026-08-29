@@ -53,8 +53,47 @@
 
         <details class="input-method">
           <summary>貼上 CSV</summary>
+
+          <div class="csv-schema">
+            <p class="csv-schema-title">
+              用呢六個欄名，貼落嚟會自動對應
+              <span class="info-dot align-start" tabindex="0" role="button" aria-describedby="tip-auto">?<span id="tip-auto" role="tooltip">欄名一模一樣先會自動對應，其餘欄會設成「忽略」。用緊其他 PMS 格式照樣貼得，只係要自己對應一次。</span></span>
+            </p>
+            <ul class="csv-schema-list">
+              <li>
+                <code>訂單編號</code>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-ref">?<span id="tip-ref" role="tooltip">一定要用訂房平台自己嗰個編號（例如 Booking.com 嘅 Reservation number），唔好自己編 1、2、3。將來接 API 自動同步嗰陣，呢個係唯一認得返舊訂單嘅 key。官網／Walk-in 自己編就加前綴，例如 WALKIN-2027-0032。</span></span>
+              </li>
+              <li>
+                <code>入住日</code>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-in">?<span id="tip-in" role="tooltip">一律 YYYY-MM-DD，例如 2027-02-01。唔好用 2/1 或者 01-02-2027，分唔清月同日。</span></span>
+              </li>
+              <li>
+                <code>退房日</code>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-out">?<span id="tip-out" role="tooltip"><strong>唔住嗰晚。</strong>2/1 入、2/5 出 = 住 4 晚。填錯做「最後一晚」會令每張訂單多算一晚，成個排房會擠爆。呢個係最常見嘅錯。</span></span>
+              </li>
+              <li>
+                <code>人數</code>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-n">?<span id="tip-n" role="tooltip">呢張訂單有幾多位客人。系統會照人數開對應數量嘅客人，等你逐個補性別。</span></span>
+              </li>
+              <li>
+                <code>稱謂</code>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-title">?<span id="tip-title" role="tooltip">Mr／Ms／Mrs。<strong>呢個係唯一可靠嘅性別預填來源</strong>，因為係客人自己填。系統仍然會要你確認。<strong>唔會用姓名去猜性別</strong> —— 國際客人最易猜錯，而錯咗係編錯一個真人嘅房。</span></span>
+              </li>
+              <li>
+                <code>狀態</code>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-status">?<span id="tip-status" role="tooltip">確認／已取消／No-show。已取消同 No-show 嘅行會自動略過，唔會佔房。<strong>唔好刪走佢哋</strong> —— 留低你先知自己嘅取消率，將來計 overbooking 要用。</span></span>
+              </li>
+            </ul>
+            <p class="csv-schema-foot">
+              <a href="./examples/splitbed-orders-example.csv" download>下載範例訂單表</a>
+              <span class="dim">·</span>
+              <a href="./guide.html#s3">完整欄目設計</a>
+            </p>
+          </div>
+
           <label class="csv-label" for="csv-text">貼上由 PMS 匯出的 CSV</label>
-          <textarea id="csv-text" rows="7" placeholder="第一行必須是欄名；任何 PMS 格式都可以，下一步再自行對應。"></textarea>
+          <textarea id="csv-text" rows="6" placeholder="第一行必須是欄名。用返上面六個欄名就會自動對應。"></textarea>
           <div class="inline-actions"><button id="parse-csv" class="allocator-secondary" type="button">讀取欄名</button></div>
           <div id="csv-mapping" class="csv-mapping" hidden></div>
           <button id="import-csv" class="allocator-primary" type="button" hidden>按以上對應匯入</button>

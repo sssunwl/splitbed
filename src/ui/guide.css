@@ -227,3 +227,84 @@ kbd {
     padding: 1rem 1.15rem;
   }
 }
+
+
+/* ── 2026-08-29 視覺系統對齊 ──────────────────────────── */
+.guide-main {
+  max-width: 58rem;
+  gap: 1rem;
+  padding: 1.5rem 1rem 4rem;
+}
+
+.guide-card {
+  padding: 1.25rem 1.35rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.16s ease;
+}
+
+.guide-card:hover {
+  border-color: var(--color-border-strong);
+}
+
+.guide-card h2 {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  margin-bottom: 0.7rem;
+}
+
+.guide-card h3 {
+  font-size: 0.98rem;
+}
+
+.guide-card p,
+.numbered-list,
+.check-list,
+.cross-list,
+.limit-list {
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.check-list,
+.cross-list,
+.numbered-list {
+  gap: 0.45rem;
+}
+
+.guide-toc {
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius);
+}
+
+.guide-toc ol {
+  font-size: 0.9rem;
+  gap: 0.25rem;
+}
+
+.guide-toc a {
+  text-decoration: none;
+}
+
+.guide-toc a:hover {
+  text-decoration: underline;
+}
+
+.guide-table {
+  font-size: 0.88rem;
+}
+
+.guide-table tbody tr {
+  transition: background 0.14s ease;
+}
+
+.guide-table tbody tr:hover {
+  background: var(--color-accent-soft);
+}
+
+.guide-table td.gain {
+  color: var(--color-gain);
+}
+
+.scenario p {
+  font-size: 0.95rem;
+}

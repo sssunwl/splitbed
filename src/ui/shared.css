@@ -1,55 +1,111 @@
+/* ═══════════════════════════════════════════════════════════
+   SplitBed 視覺系統
+   個性：儀表板，唔係文件。冷靜、精準、數字先行。
+   規則：字細啲、行距窄啲、留白緊啲、只有一個焦點。
+   色票同理由寫喺 docs/08-brand.md
+   ═══════════════════════════════════════════════════════════ */
+
 :root {
   color-scheme: light;
-  --color-background: #f6f8fb;
+
+  --color-background: #edf0f8;
   --color-surface: #ffffff;
-  --color-text: #162034;
-  --color-muted: #5d687b;
-  --color-border: #d9e0ea;
-  --color-accent: #2059c9;
+  --color-surface-2: #f5f7fd;
+  --color-text: #0d1426;
+  --color-muted: #5b6580;
+  --color-border: #d5dbe9;
+  --color-border-strong: #b9c2d8;
+  --color-accent: #3a56d8;
+  --color-accent-soft: #eaeeff;
   --color-accent-text: #ffffff;
+  --color-accent-2: #7a45d4;
+  --color-gain: #0b8f68;
+  --color-warn: #b26a00;
+
+  --nebula-1: rgba(58, 86, 216, 0.09);
+  --nebula-2: rgba(122, 69, 212, 0.07);
+  --glow: 0 0 0 1px rgba(58, 86, 216, 0.18), 0 8px 26px -12px rgba(58, 86, 216, 0.5);
+  --shadow-card: 0 1px 2px rgba(13, 20, 38, 0.05);
+
+  --radius: 0.7rem;
+  --radius-lg: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --color-background: #101522;
-    --color-surface: #182033;
-    --color-text: #edf2ff;
-    --color-muted: #aab4c8;
-    --color-border: #344057;
-    --color-accent: #82aaff;
-    --color-accent-text: #101522;
+
+    --color-background: #060911;
+    --color-surface: #0d1222;
+    --color-surface-2: #131a2e;
+    --color-text: #e9edfa;
+    --color-muted: #8c96b4;
+    --color-border: #1f2740;
+    --color-border-strong: #33405f;
+    --color-accent: #7d97ff;
+    --color-accent-soft: rgba(125, 151, 255, 0.13);
+    --color-accent-text: #060911;
+    --color-accent-2: #b98cff;
+    --color-gain: #3ad9a4;
+    --color-warn: #ffc46b;
+
+    --nebula-1: rgba(125, 151, 255, 0.14);
+    --nebula-2: rgba(185, 140, 255, 0.1);
+    --glow: 0 0 0 1px rgba(125, 151, 255, 0.28), 0 10px 34px -14px rgba(125, 151, 255, 0.7);
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
   }
 }
 
 [data-theme='dark'] {
   color-scheme: dark;
-  --color-background: #101522;
-  --color-surface: #182033;
-  --color-text: #edf2ff;
-  --color-muted: #aab4c8;
-  --color-border: #344057;
-  --color-accent: #82aaff;
-  --color-accent-text: #101522;
+  --color-background: #060911;
+  --color-surface: #0d1222;
+  --color-surface-2: #131a2e;
+  --color-text: #e9edfa;
+  --color-muted: #8c96b4;
+  --color-border: #1f2740;
+  --color-border-strong: #33405f;
+  --color-accent: #7d97ff;
+  --color-accent-soft: rgba(125, 151, 255, 0.13);
+  --color-accent-text: #060911;
+  --color-accent-2: #b98cff;
+  --color-gain: #3ad9a4;
+  --color-warn: #ffc46b;
+  --nebula-1: rgba(125, 151, 255, 0.14);
+  --nebula-2: rgba(185, 140, 255, 0.1);
+  --glow: 0 0 0 1px rgba(125, 151, 255, 0.28), 0 10px 34px -14px rgba(125, 151, 255, 0.7);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 [data-theme='light'] {
   color-scheme: light;
-  --color-background: #f6f8fb;
+  --color-background: #edf0f8;
   --color-surface: #ffffff;
-  --color-text: #162034;
-  --color-muted: #5d687b;
-  --color-border: #d9e0ea;
-  --color-accent: #2059c9;
+  --color-surface-2: #f5f7fd;
+  --color-text: #0d1426;
+  --color-muted: #5b6580;
+  --color-border: #d5dbe9;
+  --color-border-strong: #b9c2d8;
+  --color-accent: #3a56d8;
+  --color-accent-soft: #eaeeff;
   --color-accent-text: #ffffff;
+  --color-accent-2: #7a45d4;
+  --color-gain: #0b8f68;
+  --color-warn: #b26a00;
+  --nebula-1: rgba(58, 86, 216, 0.09);
+  --nebula-2: rgba(122, 69, 212, 0.07);
+  --glow: 0 0 0 1px rgba(58, 86, 216, 0.18), 0 8px 26px -12px rgba(58, 86, 216, 0.5);
+  --shadow-card: 0 1px 2px rgba(13, 20, 38, 0.05);
 }
 
 * {
   box-sizing: border-box;
 }
 
+/* 15px 基準：所有 rem 一次過收窄約 6%，區塊即刻集中。 */
 html {
   min-width: 0;
+  font-size: 15px;
   background: var(--color-background);
 }
 
@@ -58,33 +114,67 @@ body {
   margin: 0;
   overflow-x: hidden;
   color: var(--color-text);
-  background: var(--color-background);
+  background:
+    radial-gradient(60rem 34rem at 12% -8%, var(--nebula-1), transparent 62%),
+    radial-gradient(48rem 30rem at 92% 4%, var(--nebula-2), transparent 60%),
+    var(--color-background);
+  background-attachment: fixed;
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  line-height: 1.6;
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Noto Sans TC', sans-serif;
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* 所有數字用等寬字位，欄位先對得齊 */
+td,
+th,
+dd,
+.stat-big,
+.result-conclusion {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 導覽：貼頂 + 毛玻璃 ─────────────────────────────── */
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
   border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface);
+  background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+  backdrop-filter: blur(12px);
 }
 
 .site-nav {
   display: flex;
-  width: min(100% - 2rem, 72rem);
+  width: min(100% - 2rem, 96rem);
   min-width: 0;
   margin: 0 auto;
-  padding: 0.85rem 0;
+  padding: 0.6rem 0;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .brand {
+  position: relative;
   color: var(--color-text);
-  font-size: 1.15rem;
-  font-weight: 750;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
   text-decoration: none;
+}
+
+.brand::after {
+  content: '';
+  position: absolute;
+  right: -0.5rem;
+  top: 0.15rem;
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 8px var(--color-accent);
 }
 
 .nav-links {
@@ -94,67 +184,179 @@ body {
   padding: 0;
   flex: 1;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.15rem;
   list-style: none;
 }
 
 .nav-links a {
   display: block;
-  padding: 0.35rem 0.6rem;
+  padding: 0.3rem 0.65rem;
   border-radius: 0.4rem;
   color: var(--color-muted);
+  font-size: 0.9rem;
   text-decoration: none;
+  transition: color 0.14s ease, background 0.14s ease;
 }
 
 .nav-links a:hover,
 .nav-links a:focus-visible {
   color: var(--color-text);
-  background: var(--color-background);
+  background: var(--color-accent-soft);
 }
 
 .theme-toggle {
   flex: none;
-  padding: 0.45rem 0.7rem;
+  padding: 0.35rem 0.65rem;
   border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  color: var(--color-text);
-  background: var(--color-surface);
+  border-radius: 0.45rem;
+  color: var(--color-muted);
+  background: transparent;
   font: inherit;
+  font-size: 0.85rem;
   cursor: pointer;
+  transition: color 0.14s ease, border-color 0.14s ease;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
 }
 
 main {
-  width: min(100% - 2rem, 72rem);
+  width: min(100% - 2rem, 76rem);
   min-width: 0;
   margin: 0 auto;
-  padding: clamp(2.5rem, 8vw, 6rem) 0;
+  padding: clamp(1.75rem, 4vw, 3rem) 0 4rem;
 }
 
 h1 {
-  margin: 0 0 0.75rem;
-  font-size: clamp(2rem, 8vw, 3.5rem);
-  line-height: 1.15;
+  margin: 0 0 0.6rem;
+  font-size: clamp(1.6rem, 3.4vw, 2.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  letter-spacing: -0.015em;
 }
 
 p {
-  max-width: 42rem;
+  max-width: 44rem;
   margin: 0;
   color: var(--color-muted);
 }
 
+a {
+  color: var(--color-accent);
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ── 浮標說明：平時只見一個圈，指住先出 ──────────────── */
+.info-dot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.05rem;
+  height: 1.05rem;
+  margin-left: 0.3rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  color: var(--color-muted);
+  background: transparent;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: help;
+  vertical-align: middle;
+  transition: color 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.info-dot:hover,
+.info-dot:focus-visible {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.info-dot > [role='tooltip'] {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  z-index: 40;
+  width: max-content;
+  max-width: 20rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.5rem;
+  color: var(--color-text);
+  background: var(--color-surface-2);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+  font-size: 0.82rem;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  transform: translate(-50%, 3px);
+  pointer-events: none;
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+
+.info-dot:hover > [role='tooltip'],
+.info-dot:focus-visible > [role='tooltip'],
+.info-dot:focus-within > [role='tooltip'] {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* 貼邊時唔好標出畫面外 */
+.info-dot.align-start > [role='tooltip'] {
+  left: 0;
+  transform: translate(0, 3px);
+}
+
+.info-dot.align-start:hover > [role='tooltip'],
+.info-dot.align-start:focus-within > [role='tooltip'] {
+  transform: translate(0, 0);
+}
+
 @media (max-width: 40rem) {
   .site-nav {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.65rem;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   .nav-links {
+    order: 3;
     width: 100%;
-    flex-direction: column;
+    flex-direction: row;
   }
 
   .nav-links a {
-    padding-left: 0;
+    padding-left: 0.5rem;
+  }
+
+  .info-dot > [role='tooltip'] {
+    max-width: min(16rem, 70vw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
   }
 }

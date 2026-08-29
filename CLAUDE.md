@@ -14,6 +14,7 @@ Shared Accommodation Allocation Platform。母品牌 Split，SplitBed 是第一�
 - **引擎只有一份，用 TypeScript 寫**，同一份在瀏覽器與 Node 跑。不要再寫 Python 引擎。
 - `src/engine/`、`src/sim/` 是純邏輯層：不碰 DOM、網路、檔案 IO。執行期依賴為零。
 - 不用 React / 任何 UI 框架。
+- 視覺一律跟 `docs/08-brand.md`：一屏一個焦點、字細行緊、冗長解釋收埋做 `.info-dot` 浮標。
 - **Cloudflare 上不要用 Python**（跑不到 OR-Tools）。TS 引擎一份跑三處：瀏覽器 / Worker / Node。
 - Phase 2 多租戶：**每個客戶一個獨立 D1 資料庫** + 一個共用 registry。不做「共用表 + tenant_id」。
 - 訂單匯入不追求全自動：**沒有任何 OTA feed 提供性別**，設計成「匯入骨架 + 快速補性別」。
@@ -27,7 +28,8 @@ Shared Accommodation Allocation Platform。母品牌 Split，SplitBed 是第一�
 - `docs/04-web-app-scope.md` — 網頁小程式範圍 + `/guide` 說明頁的六節內容
 - `docs/05-sapporo-baseline.md` — 「札幌改 Mixed 一季多賺幾多」的參考答案，同時是 WP-3 驗收基準
 - `docs/06-multi-tenancy-and-ingestion.md` — 多租戶（每客戶一個 D1）、Cloudflare 決定、訂單匯入策略
-- `docs/07-booking-sheet.md` — 訂單記錄表設計 + 接落真正訂單系統嘅三階段路線（範例檔喺 `examples/`）
+- `docs/07-booking-sheet.md` — 訂單記錄表設計 + 接落真正訂單系統嘅三階段路線（範例檔喺 `public/examples/`）
+- `docs/08-brand.md` — **改任何介面之前先讀**：品牌個性、色票、字級、hover、浮標用法
 
 > **只在本機、不在 public repo** 的檔案（見 `.gitignore`）：
 > `docs/05-sapporo-baseline.md`、`docs/06-multi-tenancy-and-ingestion.md`、`handoff/`。

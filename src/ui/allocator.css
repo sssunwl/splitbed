@@ -618,3 +618,94 @@
     width: min(100% - 4rem, 96rem);
   }
 }
+
+/* ── 匯入欄目說明（浮標式，平時只見欄名同一個圈）────────── */
+.csv-schema {
+  margin: 0 0 0.9rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface-2);
+}
+
+.csv-schema-title {
+  margin: 0 0 0.6rem;
+  color: var(--color-text);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.csv-schema-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.csv-schema-list li {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28rem 0.45rem 0.28rem 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.45rem;
+  background: var(--color-surface);
+  transition: border-color 0.14s ease;
+}
+
+.csv-schema-list li:hover {
+  border-color: var(--color-accent);
+}
+
+.csv-schema-list code {
+  font-size: 0.82rem;
+  color: var(--color-text);
+}
+
+.csv-schema-foot {
+  margin: 0.7rem 0 0;
+  font-size: 0.82rem;
+}
+
+.csv-schema-foot .dim {
+  color: var(--color-muted);
+  margin: 0 0.3rem;
+}
+
+
+/* ── 2026-08-29 視覺系統對齊 ──────────────────────────── */
+.allocator-card {
+  padding: 1.15rem 1.25rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.allocator-hero {
+  margin-bottom: 1.5rem;
+}
+
+.allocator-card h2 {
+  font-size: 1.1rem;
+}
+
+.allocator-main table {
+  font-size: 0.85rem;
+}
+
+.allocator-main tbody tr {
+  transition: background 0.14s ease;
+}
+
+.allocator-primary,
+.allocator-secondary {
+  transition: box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.allocator-primary:hover:not(:disabled) {
+  box-shadow: var(--glow);
+}
+
+.allocator-secondary:hover {
+  border-color: var(--color-accent);
+}

@@ -1,11 +1,11 @@
 /* 桌面／iPad 優先：大螢幕用兩欄，細螢幕先跌返單欄 */
 .landing {
-  max-width: 78rem;
+  max-width: 76rem;
   margin: 0 auto;
-  padding: 2.5rem 1.25rem 5rem;
+  padding: 1.75rem 1.25rem 4rem;
   display: flex;
   flex-direction: column;
-  gap: 3.5rem;
+  gap: 1.75rem;
 }
 
 .landing-hero {
@@ -23,17 +23,17 @@
 }
 
 .landing-hero h1 {
-  margin: 0.5rem 0 1rem;
-  font-size: clamp(1.9rem, 4.2vw, 3.1rem);
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  margin: 0.35rem 0 0.8rem;
+  font-size: clamp(1.7rem, 3.4vw, 2.7rem);
+  line-height: 1.22;
+  letter-spacing: -0.025em;
 }
 
 .hero-lead {
-  font-size: clamp(1rem, 1.6vw, 1.2rem);
-  line-height: 1.8;
+  font-size: 0.98rem;
+  line-height: 1.65;
   color: var(--color-muted);
-  max-width: 34rem;
+  max-width: 31rem;
 }
 
 .hero-lead strong {
@@ -44,7 +44,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin: 1.75rem 0 0.9rem;
+  margin: 1.35rem 0 0.7rem;
 }
 
 /* landing 頁唔載入 home.css，所以喺度自己定義掣嘅樣式，
@@ -93,10 +93,27 @@
 
 /* 數字卡 */
 .hero-stat-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 1rem;
-  padding: 1.75rem;
+  position: relative;
+  background: linear-gradient(160deg, var(--color-surface-2), var(--color-surface));
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem 1.5rem;
+  box-shadow: var(--glow);
+}
+
+.hero-stat-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg, var(--color-accent), transparent 45%, var(--color-accent-2));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.55;
+  pointer-events: none;
 }
 
 .stat-kicker {
@@ -109,15 +126,18 @@
 
 .stat-big {
   margin: 0.4rem 0 0.2rem;
-  font-size: clamp(2.2rem, 5vw, 3rem);
-  font-weight: 700;
+  font-size: clamp(2.1rem, 4.4vw, 2.9rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
   color: var(--color-accent);
-  line-height: 1.1;
+  line-height: 1.05;
+  text-shadow: 0 0 28px var(--color-accent-soft);
 }
 
 .stat-sub {
-  margin: 0 0 1.25rem;
+  margin: 0 0 1rem;
   color: var(--color-muted);
+  font-size: 0.88rem;
 }
 
 .stat-rows {
@@ -158,8 +178,9 @@
 .landing-section {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 1rem;
-  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.25rem, 2.2vw, 1.85rem);
+  box-shadow: var(--shadow-card);
 }
 
 .section-kicker {
@@ -172,16 +193,17 @@
 }
 
 .landing-section h2 {
-  margin: 0.4rem 0 1rem;
-  font-size: clamp(1.4rem, 2.8vw, 2rem);
-  line-height: 1.35;
+  margin: 0.3rem 0 0.75rem;
+  font-size: clamp(1.15rem, 2vw, 1.55rem);
+  line-height: 1.3;
 }
 
 .section-lead {
-  margin: 0 0 1.5rem;
-  max-width: 46rem;
-  line-height: 1.8;
+  margin: 0 0 1.15rem;
+  max-width: 44rem;
+  line-height: 1.65;
   color: var(--color-muted);
+  font-size: 0.95rem;
 }
 
 .section-lead strong {
@@ -221,8 +243,9 @@
 }
 
 .problem-copy p {
-  line-height: 1.85;
-  margin: 0 0 1rem;
+  line-height: 1.7;
+  margin: 0 0 0.8rem;
+  font-size: 0.95rem;
 }
 
 .problem-copy .emphasis {
@@ -238,7 +261,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 1.25rem;
+  gap: 0.7rem;
 }
 
 @media (min-width: 48rem) {
@@ -255,9 +278,16 @@
 
 .how-grid li {
   border: 1px solid var(--color-border);
-  border-radius: 0.8rem;
-  padding: 1.25rem;
-  background: var(--color-background);
+  border-radius: var(--radius);
+  padding: 0.95rem 1rem;
+  background: var(--color-surface-2);
+  transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.how-grid li:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+  box-shadow: var(--glow);
 }
 
 .how-num {
@@ -269,16 +299,16 @@
 }
 
 .how-grid h3 {
-  margin: 0.4rem 0 0.5rem;
-  font-size: 1.05rem;
-  line-height: 1.45;
+  margin: 0.3rem 0 0.35rem;
+  font-size: 0.97rem;
+  line-height: 1.35;
 }
 
 .how-grid p {
   margin: 0;
   color: var(--color-muted);
-  line-height: 1.7;
-  font-size: 0.95rem;
+  line-height: 1.55;
+  font-size: 0.86rem;
 }
 
 .how-foot {
@@ -303,18 +333,23 @@
 .tool-card {
   display: block;
   border: 1px solid var(--color-border);
-  border-radius: 0.9rem;
-  padding: 1.5rem;
-  background: var(--color-background);
+  border-radius: var(--radius);
+  padding: 1.15rem 1.25rem;
+  background: var(--color-surface-2);
   color: inherit;
   text-decoration: none;
-  transition: border-color 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
 }
 
 .tool-card:hover,
 .tool-card:focus-visible {
   border-color: var(--color-accent);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: var(--glow);
+}
+
+.tool-card:hover .tool-cta {
+  letter-spacing: 0.02em;
 }
 
 .tool-card h3 {
@@ -330,14 +365,17 @@
 }
 
 .tool-card p {
-  line-height: 1.75;
+  line-height: 1.6;
   color: var(--color-muted);
+  font-size: 0.9rem;
 }
 
 .tool-cta {
-  margin: 1rem 0 0;
+  margin: 0.8rem 0 0;
   color: var(--color-accent);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: letter-spacing 0.16s ease;
 }
 
 /* 限制 */
@@ -347,10 +385,12 @@
 
 .limit-list {
   margin: 0;
-  padding-left: 1.3rem;
+  padding-left: 1.2rem;
   display: grid;
-  gap: 0.6rem;
-  line-height: 1.75;
+  gap: 0.4rem;
+  line-height: 1.6;
+  font-size: 0.93rem;
+  color: var(--color-muted);
 }
 
 .limit-foot {
