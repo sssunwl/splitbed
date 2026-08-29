@@ -6,12 +6,173 @@
     <meta name="description" content="SplitBed What-if 模擬器" />
     <title>What-if 模擬器｜SplitBed</title>
     <link rel="stylesheet" href="/src/ui/shared.css" />
+    <link rel="stylesheet" href="/src/ui/home.css" />
   </head>
   <body>
     <div id="site-nav"></div>
-    <main>
-      <h1>What-if 模擬器</h1>
-      <p>比較不同房間政策對入住率與床位運用的影響。</p>
+    <main class="simulator-main">
+      <header class="simulator-hero">
+        <p class="eyebrow">免費 What-if 模擬器</p>
+        <h1>改房間規則，值幾多錢？</h1>
+        <p class="hero-copy">輸入你的房型，睇下改房間規則一季多賺幾多。資料只留在你部電腦。</p>
+      </header>
+
+      <form id="simulator-form" novalidate>
+        <section class="sim-card" aria-labelledby="rooms-heading">
+          <div class="section-heading">
+            <div>
+              <p class="step-label">步驟 1</p>
+              <h2 id="rooms-heading">房間設定</h2>
+            </div>
+            <p id="room-summary" class="room-summary" aria-live="polite"></p>
+          </div>
+
+          <div class="room-list-heading" aria-hidden="true">
+            <span>房間代號</span>
+            <span>床數</span>
+            <span>男女同房</span>
+            <span></span>
+          </div>
+          <div id="room-list" class="room-list"></div>
+          <button id="add-room" class="secondary-button add-room-button" type="button">＋ 加一間房</button>
+
+          <div class="number-grid">
+            <label class="field-label">
+              <span>每床每晚房價</span>
+              <span class="input-with-prefix"><span>¥</span><input id="nightly-rate" type="number" min="0" step="100" inputmode="numeric" /></span>
+            </label>
+            <label class="field-label">
+              <span>一季幾多晚</span>
+              <span class="input-with-suffix"><input id="season-nights" type="number" min="0" step="1" inputmode="numeric" /><span>晚</span></span>
+            </label>
+          </div>
+        </section>
+
+        <section class="sim-card" aria-labelledby="policies-heading">
+          <div class="section-heading">
+            <div>
+              <p class="step-label">步驟 2</p>
+              <h2 id="policies-heading">同時比較三種規則</h2>
+            </div>
+          </div>
+          <div class="policy-grid">
+            <article class="policy-option">
+              <span class="policy-number">01</span>
+              <h3>男女分房</h3>
+              <p>全部房都只可全男或全女。</p>
+            </article>
+            <article class="policy-option policy-option-featured">
+              <span class="policy-number">02</span>
+              <h3>部分開放</h3>
+              <p>只有上面勾選咗的房可以男女同房。</p>
+              <strong id="hybrid-status" class="policy-status"></strong>
+            </article>
+            <article class="policy-option">
+              <span class="policy-number">03</span>
+              <h3>全面開放</h3>
+              <p>全部房都可以男女同房。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="sim-card" aria-labelledby="demand-heading">
+          <div class="section-heading">
+            <div>
+              <p class="step-label">步驟 3</p>
+              <h2 id="demand-heading">需求設定</h2>
+            </div>
+          </div>
+          <label class="range-label" for="demand-ratio">
+            <span>客人想訂的數量佔總容量</span>
+            <output id="demand-value" for="demand-ratio">100%</output>
+          </label>
+          <input id="demand-ratio" class="range-input" type="range" min="50" max="150" step="5" value="100" />
+          <p id="booking-estimate" class="plain-estimate" aria-live="polite"></p>
+
+          <details class="advanced-settings">
+            <summary>進階設定</summary>
+            <div class="advanced-grid">
+              <label class="field-label" for="male-ratio">
+                <span>男女比例</span>
+                <span class="range-label compact"><span>男客比例</span><output id="male-ratio-value" for="male-ratio">60%</output></span>
+                <input id="male-ratio" class="range-input" type="range" min="0" max="100" step="5" value="60" />
+              </label>
+              <label class="field-label" for="average-stay">
+                <span>平均住幾晚</span>
+                <span class="input-with-suffix"><input id="average-stay" type="number" min="1" max="90" step="0.1" value="5.6" inputmode="decimal" /><span>晚</span></span>
+              </label>
+              <label class="field-label" for="average-group">
+                <span>平均幾多人一組</span>
+                <span class="input-with-suffix"><input id="average-group" type="number" min="1" max="10" step="0.1" value="2.1" inputmode="decimal" /><span>人</span></span>
+              </label>
+            </div>
+          </details>
+        </section>
+
+        <section class="run-panel" aria-labelledby="run-heading">
+          <div>
+            <p class="step-label">步驟 4</p>
+            <h2 id="run-heading">揀計算精度</h2>
+            <div class="mode-options">
+              <label><input type="radio" name="mode" value="30" checked />快速（30 次）</label>
+              <label><input type="radio" name="mode" value="200" />完整（200 次）</label>
+            </div>
+          </div>
+          <button id="calculate-button" class="primary-button" type="submit">開始計算</button>
+          <p id="form-message" class="form-message" role="alert" hidden></p>
+          <div id="progress-wrap" class="progress-wrap" hidden>
+            <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+            <p id="progress-text" aria-live="polite">已完成 0 / 30 次</p>
+          </div>
+        </section>
+      </form>
+
+      <section id="results" class="results-section" aria-labelledby="result-conclusion" hidden>
+        <div id="stale-notice" class="stale-notice" role="status" hidden>已過時，請重新計算。</div>
+        <p class="result-kicker">模擬結果</p>
+        <h2 id="result-conclusion" class="result-conclusion"></h2>
+
+        <div class="table-scroll" tabindex="0" aria-label="收入比較表，可左右捲動">
+          <table>
+            <thead><tr><th scope="col">規則</th><th scope="col">入住率</th><th scope="col">一季收入</th><th scope="col">比男女分房多賺</th></tr></thead>
+            <tbody id="income-table-body"></tbody>
+          </table>
+        </div>
+
+        <div class="chart-card">
+          <h3>一季收入比較</h3>
+          <svg id="revenue-chart" class="revenue-chart" viewBox="0 0 800 250" role="img" aria-labelledby="chart-title chart-description">
+            <title id="chart-title">三種房間規則的一季收入橫向長條圖</title>
+            <desc id="chart-description">長條越長，模擬的一季收入越高，每條長條均附有金額。</desc>
+            <g id="chart-bars"></g>
+          </svg>
+        </div>
+
+        <div class="table-scroll" tabindex="0" aria-label="其他影響比較表，可左右捲動">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">規則</th>
+                <th scope="col">
+                  被鎖住賣不出的床晚
+                  <span class="tooltip" tabindex="0" aria-describedby="stranded-tip">？<span id="stranded-tip" role="tooltip">張床係空嘅，但當晚已經被規則鎖死，賣唔出。</span></span>
+                </th>
+                <th scope="col">
+                  被逼拆開睡的訂單
+                  <span class="tooltip" tabindex="0" aria-describedby="split-tip">？<span id="split-tip" role="tooltip">例如混性別情侶，男女分房之下無法同房。</span></span>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="impact-table-body"></tbody>
+          </table>
+        </div>
+
+        <details class="assumptions">
+          <summary>今次計算用了甚麼假設？</summary>
+          <div id="assumption-list"></div>
+          <p>呢個係模擬結果，用嘅係一般旅舍嘅需求分佈，唔係你自己嘅歷史訂單。亦都未計改規則之後可能流失嘅客人。真實數字要用自己嘅訂單重跑先準。</p>
+        </details>
+      </section>
     </main>
     <script type="module" src="/src/ui/home.ts"></script>
   </body>
