@@ -6,6 +6,14 @@ import type {
   SimulationResponse,
   SimulationRow,
 } from './sim.worker';
+import {
+  expectedValue,
+  GROUP_PRESETS,
+  GROUP_PRESET_NAMES,
+  STAY_PRESETS,
+  STAY_PRESET_NAMES,
+  type WeightedDistribution,
+} from './sim-presets';
 import { loadConfig, saveConfig, type RoomSpec, type SiteConfig } from './store';
 
 mountNav();
@@ -30,8 +38,8 @@ const demandValue = requiredElement<HTMLOutputElement>('#demand-value');
 const bookingEstimate = requiredElement<HTMLParagraphElement>('#booking-estimate');
 const maleRatioInput = requiredElement<HTMLInputElement>('#male-ratio');
 const maleRatioValue = requiredElement<HTMLOutputElement>('#male-ratio-value');
-const averageStayInput = requiredElement<HTMLInputElement>('#average-stay');
-const averageGroupInput = requiredElement<HTMLInputElement>('#average-group');
+const stayPresetInput = requiredElement<HTMLSelectElement>('#stay-preset');
+const groupPresetInput = requiredElement<HTMLSelectElement>('#group-preset');
 const calculateButton = requiredElement<HTMLButtonElement>('#calculate-button');
 const formMessage = requiredElement<HTMLParagraphElement>('#form-message');
 const progressWrap = requiredElement<HTMLDivElement>('#progress-wrap');
@@ -71,6 +79,18 @@ function formatPercent(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
 }
 
+function formatDistribution(
+  distribution: WeightedDistribution,
+  unit: '晚' | '人',
+): string {
+  return distribution
+    .map(
+      ([value, probability]) =>
+        `${value} ${unit} ${Number((probability * 100).toFixed(4))}%`,
+    )
+    .join('、');
+}
+
 function markResultsStale(): void {
   revision += 1;
   if (!results.hidden) {
@@ -81,27 +101,29 @@ function markResultsStale(): void {
 function readAdvancedDemand(): AdvancedDemand {
   return {
     maleRatio: numericValue(maleRatioInput),
-    averageStayNights: numericValue(averageStayInput),
-    averageGroupSize: numericValue(averageGroupInput),
+    stayPreset: stayPresetInput.value as AdvancedDemand['stayPreset'],
+    groupPreset: groupPresetInput.value as AdvancedDemand['groupPreset'],
   };
 }
 
 function estimatedBookings(): number | null {
   const advanced = readAdvancedDemand();
+  const averageStayNights = expectedValue(STAY_PRESETS[advanced.stayPreset]);
+  const averageGroupSize = expectedValue(GROUP_PRESETS[advanced.groupPreset]);
   const beds = totalBeds(siteConfig.rooms);
   const demandPercent = numericValue(demandInput);
   if (
     beds <= 0 ||
     siteConfig.seasonNights <= 0 ||
     !Number.isFinite(demandPercent) ||
-    advanced.averageStayNights <= 0 ||
-    advanced.averageGroupSize <= 0
+    averageStayNights <= 0 ||
+    averageGroupSize <= 0
   ) {
     return null;
   }
   return Math.round(
     (beds * siteConfig.seasonNights * (demandPercent / 100)) /
-      (advanced.averageStayNights * advanced.averageGroupSize),
+      (averageStayNights * averageGroupSize),
   );
 }
 
@@ -118,7 +140,6 @@ function updateDerivedText(): void {
     estimate === null
       ? '填好房間、季節長度及進階設定後，就會見到訂單估算。'
       : `即係大約 ${estimate.toLocaleString('zh-Hant-TW')} 張訂單想入住。`;
-  averageStayInput.max = `${Math.max(1, siteConfig.seasonNights)}`;
 }
 
 function renderRooms(): void {
@@ -193,20 +214,6 @@ function validationMessages(): string[] {
   const advanced = readAdvancedDemand();
   if (!Number.isFinite(advanced.maleRatio) || advanced.maleRatio < 0 || advanced.maleRatio > 100) {
     messages.push('男客比例要介乎 0% 至 100%。');
-  }
-  if (
-    !Number.isFinite(advanced.averageStayNights) ||
-    advanced.averageStayNights < 1 ||
-    advanced.averageStayNights > siteConfig.seasonNights
-  ) {
-    messages.push('平均住宿晚數要由 1 晚至一季總晚數之間。');
-  }
-  if (
-    !Number.isFinite(advanced.averageGroupSize) ||
-    advanced.averageGroupSize < 1 ||
-    advanced.averageGroupSize > 10
-  ) {
-    messages.push('平均每組人數要介乎 1 至 10 人。');
   }
   return messages;
 }
@@ -318,9 +325,11 @@ function renderAssumptions(
   elapsedMs: number,
 ): void {
   const beds = totalBeds(request.siteConfig.rooms);
+  const stayDistribution = STAY_PRESETS[request.advanced.stayPreset];
+  const groupDistribution = GROUP_PRESETS[request.advanced.groupPreset];
   const orders = Math.round(
     (beds * request.siteConfig.seasonNights * (request.demandPercent / 100)) /
-      (request.advanced.averageStayNights * request.advanced.averageGroupSize),
+      (expectedValue(stayDistribution) * expectedValue(groupDistribution)),
   );
   const mixedRooms = request.siteConfig.rooms
     .filter((room) => room.mixed)
@@ -333,8 +342,8 @@ function renderAssumptions(
     `季節長度：${request.siteConfig.seasonNights} 晚，由 2026-01-01 起計`,
     `需求：總容量的 ${request.demandPercent}%，約 ${orders} 張訂單`,
     `性別比例：男 ${request.advanced.maleRatio}%、女 ${100 - request.advanced.maleRatio}%`,
-    `平均住宿：${request.advanced.averageStayNights} 晚（相鄰整數加權）`,
-    `平均組別：${request.advanced.averageGroupSize} 人（相鄰整數加權）`,
+    `住宿長度（${STAY_PRESET_NAMES[request.advanced.stayPreset]}）：${formatDistribution(stayDistribution, '晚')}`,
+    `團體人數（${GROUP_PRESET_NAMES[request.advanced.groupPreset]}）：${formatDistribution(groupDistribution, '人')}`,
     '同一性別組別機率：70%',
     '平均預訂提前期：14 日',
     '入住日：在一季內隨機分佈',
@@ -499,6 +508,14 @@ form.addEventListener('input', (event) => {
   } else if (target === seasonNightsInput) {
     siteConfig = { ...siteConfig, seasonNights: numericValue(seasonNightsInput) };
     saveVisibleConfig();
+  }
+  updateDerivedText();
+  markResultsStale();
+});
+
+form.addEventListener('change', (event) => {
+  if (event.target !== stayPresetInput && event.target !== groupPresetInput) {
+    return;
   }
   updateDerivedText();
   markResultsStale();

@@ -158,7 +158,8 @@ button {
 }
 
 input[type='text'],
-input[type='number'] {
+input[type='number'],
+select {
   width: 100%;
   min-width: 0;
   padding: 0.65rem 0.7rem;

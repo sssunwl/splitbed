@@ -2,14 +2,20 @@ import type { Bed, Property, PropertyPolicy, Room } from '../engine/types';
 import { generateDemand, type DemandConfig } from '../sim/demand';
 import { calculateKpi } from '../sim/kpi';
 import { replay } from '../sim/replay';
+import {
+  GROUP_PRESETS,
+  STAY_PRESETS,
+  type GroupPreset,
+  type StayPreset,
+} from './sim-presets';
 import type { RoomSpec, SiteConfig } from './store';
 
 export type ScenarioId = 'same_gender' | 'hybrid' | 'mixed';
 
 export interface AdvancedDemand {
   maleRatio: number;
-  averageStayNights: number;
-  averageGroupSize: number;
+  stayPreset: StayPreset;
+  groupPreset: GroupPreset;
 }
 
 export interface SimulationRequest {
@@ -34,27 +40,6 @@ export type SimulationResponse =
   | { type: 'error'; message: string };
 
 const SCENARIOS: readonly ScenarioId[] = ['same_gender', 'hybrid', 'mixed'];
-
-function clamp(value: number, minimum: number, maximum: number): number {
-  return Math.min(maximum, Math.max(minimum, value));
-}
-
-function weightedIntegerMean(
-  value: number,
-  minimum: number,
-  maximum: number,
-): ReadonlyArray<[number, number]> {
-  const bounded = clamp(value, minimum, maximum);
-  const lower = Math.floor(bounded);
-  const upper = Math.ceil(bounded);
-  if (lower === upper) {
-    return [[lower, 1]];
-  }
-  return [
-    [lower, upper - bounded],
-    [upper, bounded - lower],
-  ];
-}
 
 function makeRooms(roomSpecs: readonly RoomSpec[], scenario: ScenarioId): Room[] {
   return roomSpecs.map((room, index) => ({
@@ -92,7 +77,11 @@ function propertyFor(siteName: string, scenario: ScenarioId): Property {
   };
 }
 
-function runSimulation(request: SimulationRequest): SimulationRow[] {
+/** Runs the deterministic comparison without depending on the Worker environment. */
+export function runSimulation(
+  request: SimulationRequest,
+  onProgress: (completed: number, total: number) => void = () => undefined,
+): SimulationRow[] {
   const totalBeds = request.siteConfig.rooms.reduce((sum, room) => sum + room.beds, 0);
   const totalCapacityBedNights = totalBeds * request.siteConfig.seasonNights;
   const demandConfig: DemandConfig = {
@@ -102,12 +91,8 @@ function runSimulation(request: SimulationRequest): SimulationRow[] {
     nightlyRate: request.siteConfig.nightlyRate,
     maleRatio: request.advanced.maleRatio / 100,
     sameGenderGroupProb: 0.7,
-    stayNights: weightedIntegerMean(
-      request.advanced.averageStayNights,
-      1,
-      request.siteConfig.seasonNights,
-    ),
-    groupSize: weightedIntegerMean(request.advanced.averageGroupSize, 1, 10),
+    stayNights: STAY_PRESETS[request.advanced.stayPreset],
+    groupSize: GROUP_PRESETS[request.advanced.groupPreset],
     leadTimeMeanDays: 14,
   };
   const beds = makeBeds(request.siteConfig.rooms);
@@ -141,11 +126,7 @@ function runSimulation(request: SimulationRequest): SimulationRow[] {
         total.forcedSplits += kpi.forcedSplits;
       }
     }
-    self.postMessage({
-      type: 'progress',
-      completed: seed + 1,
-      total: request.seedCount,
-    } satisfies SimulationResponse);
+    onProgress(seed + 1, request.seedCount);
   }
 
   return SCENARIOS.map((scenario) => {
@@ -163,22 +144,26 @@ function runSimulation(request: SimulationRequest): SimulationRow[] {
   });
 }
 
-self.addEventListener('message', (event: MessageEvent<SimulationRequest>) => {
-  if (event.data.type !== 'start') {
-    return;
-  }
-  const startedAt = performance.now();
-  try {
-    const rows = runSimulation(event.data);
-    self.postMessage({
-      type: 'result',
-      rows,
-      elapsedMs: performance.now() - startedAt,
-    } satisfies SimulationResponse);
-  } catch (error) {
-    self.postMessage({
-      type: 'error',
-      message: error instanceof Error ? error.message : '計算失敗，請再試一次。',
-    } satisfies SimulationResponse);
-  }
-});
+if (typeof self !== 'undefined' && typeof document === 'undefined') {
+  self.addEventListener('message', (event: MessageEvent<SimulationRequest>) => {
+    if (event.data.type !== 'start') {
+      return;
+    }
+    const startedAt = performance.now();
+    try {
+      const rows = runSimulation(event.data, (completed, total) => {
+        self.postMessage({ type: 'progress', completed, total } satisfies SimulationResponse);
+      });
+      self.postMessage({
+        type: 'result',
+        rows,
+        elapsedMs: performance.now() - startedAt,
+      } satisfies SimulationResponse);
+    } catch (error) {
+      self.postMessage({
+        type: 'error',
+        message: error instanceof Error ? error.message : '計算失敗，請再試一次。',
+      } satisfies SimulationResponse);
+    }
+  });
+}

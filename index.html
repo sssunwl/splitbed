@@ -97,13 +97,21 @@
                 <span class="range-label compact"><span>男客比例</span><output id="male-ratio-value" for="male-ratio">60%</output></span>
                 <input id="male-ratio" class="range-input" type="range" min="0" max="100" step="5" value="60" />
               </label>
-              <label class="field-label" for="average-stay">
-                <span>平均住幾晚</span>
-                <span class="input-with-suffix"><input id="average-stay" type="number" min="1" max="90" step="0.1" value="5.6" inputmode="decimal" /><span>晚</span></span>
+              <label class="field-label" for="stay-preset">
+                <span>住宿長度</span>
+                <select id="stay-preset">
+                  <option value="short">短住為主</option>
+                  <option value="balanced" selected>平衡</option>
+                  <option value="long">長住為主</option>
+                </select>
               </label>
-              <label class="field-label" for="average-group">
-                <span>平均幾多人一組</span>
-                <span class="input-with-suffix"><input id="average-group" type="number" min="1" max="10" step="0.1" value="2.1" inputmode="decimal" /><span>人</span></span>
+              <label class="field-label" for="group-preset">
+                <span>團體人數</span>
+                <select id="group-preset">
+                  <option value="solo">多獨行客</option>
+                  <option value="balanced" selected>平衡</option>
+                  <option value="group">多團體</option>
+                </select>
               </label>
             </div>
           </details>
