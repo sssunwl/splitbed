@@ -69,8 +69,8 @@
 .simulator-hero h1 {
   max-width: 50rem;
   margin-bottom: 1rem;
-  font-size: clamp(2.35rem, 8vw, 4.75rem);
-  letter-spacing: -0.045em;
+  font-size: clamp(1.55rem, 3.2vw, 2.35rem);
+  letter-spacing: -0.025em;
 }
 
 .hero-copy {
