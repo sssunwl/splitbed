@@ -6,12 +6,106 @@
     <meta name="description" content="SplitBed 排房小工具" />
     <title>排房小工具｜SplitBed</title>
     <link rel="stylesheet" href="/src/ui/shared.css" />
+    <link rel="stylesheet" href="/src/ui/allocator.css" />
   </head>
   <body>
     <div id="site-nav"></div>
-    <main>
-      <h1>排房小工具</h1>
-      <p>輸入房間與訂單後，取得兼顧規則與床位運用的房間建議。</p>
+    <main class="allocator-main">
+      <header class="allocator-hero">
+        <p class="allocator-eyebrow">每日排房工作台</p>
+        <h1>今日啲客，點樣排房？</h1>
+        <p>設定房間、加入訂單、快速補齊性別，系統會提供可調整及鎖定的排房建議。所有資料只留在你部電腦。</p>
+      </header>
+
+      <section class="allocator-card" aria-labelledby="allocator-rooms-heading">
+        <div class="allocator-section-heading">
+          <div><span>01</span><h2 id="allocator-rooms-heading">房間與床位</h2></div>
+          <p id="allocator-room-summary"></p>
+        </div>
+        <div id="allocator-room-list" class="allocator-room-list"></div>
+        <button id="allocator-add-room" class="allocator-secondary" type="button">＋ 加一間房</button>
+        <details class="bed-closures">
+          <summary>設定床位停用日期</summary>
+          <p>開始或結束日期可以留空，表示該方向無限期。</p>
+          <div id="bed-closure-list" class="bed-closure-list"></div>
+        </details>
+      </section>
+
+      <section class="allocator-card" aria-labelledby="booking-input-heading">
+        <div class="allocator-section-heading">
+          <div><span>02</span><h2 id="booking-input-heading">加入訂單</h2></div>
+          <button id="load-sample" class="allocator-secondary" type="button">載入札幌範例</button>
+        </div>
+
+        <details open class="input-method">
+          <summary>手動加一張訂單</summary>
+          <form id="manual-booking-form" class="manual-booking-form" novalidate>
+            <label>訂單編號<input id="manual-reference" type="text" required /></label>
+            <label>入住日<input id="manual-check-in" type="date" required /></label>
+            <label>退房日<input id="manual-check-out" type="date" required /></label>
+            <label>人數<input id="manual-guest-count" type="number" min="1" step="1" value="1" required /></label>
+            <label>來源<select id="manual-source"><option value="direct">官網／直接</option><option value="booking_com">Booking.com</option><option value="agoda">Agoda</option><option value="airbnb">Airbnb</option><option value="expedia">Expedia</option><option value="agent">旅行社</option><option value="walk_in">Walk-in</option><option value="phone">電話</option><option value="staff">職員</option></select></label>
+            <label class="together-check"><input id="manual-together" type="checkbox" checked />必須同房</label>
+            <label class="manual-notes">備註<input id="manual-notes" type="text" /></label>
+            <button class="allocator-primary" type="submit">加入訂單</button>
+          </form>
+        </details>
+
+        <details class="input-method">
+          <summary>貼上 CSV</summary>
+          <label class="csv-label" for="csv-text">貼上由 PMS 匯出的 CSV</label>
+          <textarea id="csv-text" rows="7" placeholder="第一行必須是欄名；任何 PMS 格式都可以，下一步再自行對應。"></textarea>
+          <div class="inline-actions"><button id="parse-csv" class="allocator-secondary" type="button">讀取欄名</button></div>
+          <div id="csv-mapping" class="csv-mapping" hidden></div>
+          <button id="import-csv" class="allocator-primary" type="button" hidden>按以上對應匯入</button>
+        </details>
+        <p id="booking-input-message" class="allocator-message" role="alert" hidden></p>
+      </section>
+
+      <section class="allocator-card" aria-labelledby="booking-list-heading">
+        <div class="allocator-section-heading">
+          <div><span>03</span><h2 id="booking-list-heading">訂單與客人性別</h2></div>
+          <p id="gender-progress" aria-live="polite"></p>
+        </div>
+        <div class="keyboard-hint"><strong>最快方法：</strong>按 M 男、F 女、U 未定；方向鍵移動。每次選完會自動跳下一位。</div>
+        <div id="booking-list" class="booking-list"></div>
+      </section>
+
+      <section class="allocator-run-panel" aria-labelledby="allocation-action-heading">
+        <div><span>04</span><h2 id="allocation-action-heading">產生排房建議</h2><p>重新排房會保留已鎖定客人；全部重排會先解除所有鎖定。</p></div>
+        <div class="run-actions"><button id="solve-button" class="allocator-primary" type="button">重新排房</button><button id="reset-solve-button" class="allocator-secondary" type="button">全部重排</button></div>
+        <p id="solve-message" class="allocator-message" role="alert" hidden></p>
+      </section>
+
+      <section id="allocation-results" class="allocation-results" hidden>
+        <section class="allocator-card" aria-labelledby="calendar-heading">
+          <div class="allocator-section-heading"><div><span>結果 A</span><h2 id="calendar-heading">房間 Calendar</h2></div><p id="calendar-range"></p></div>
+          <div id="calendar-scroll" class="calendar-scroll" tabindex="0" aria-label="房間日曆，可左右捲動"></div>
+          <aside id="cell-detail" class="cell-detail" hidden></aside>
+        </section>
+
+        <section class="allocator-card" aria-labelledby="suggestion-heading">
+          <div class="allocator-section-heading"><div><span>結果 B</span><h2 id="suggestion-heading">建議列表</h2></div></div>
+          <div class="suggestion-scroll"><table class="suggestion-table"><thead><tr><th>訂單編號</th><th>建議房間</th><th>理由／無法安排原因</th></tr></thead><tbody id="suggestion-body"></tbody></table></div>
+        </section>
+
+        <section class="allocator-card" aria-labelledby="adjustment-heading">
+          <div class="allocator-section-heading"><div><span>結果 C</span><h2 id="adjustment-heading">人手調整與鎖定</h2></div></div>
+          <div class="adjustment-grid">
+            <label>揀一位客人<select id="adjust-guest"></select></label>
+            <label>改去另一間房<select id="adjust-room"></select></label>
+          </div>
+          <div id="impact-preview" class="impact-preview"><p>被鎖住賣不出的床晚 <strong>—</strong></p><p>完全空置的房間 <strong>—</strong></p></div>
+          <button id="confirm-adjustment" class="allocator-primary" type="button" disabled>確認調整並鎖定</button>
+          <div id="locked-list" class="locked-list"></div>
+        </section>
+      </section>
+
+      <section class="allocator-card" aria-labelledby="transfer-heading">
+        <div class="allocator-section-heading"><div><span>05</span><h2 id="transfer-heading">匯出／匯入</h2></div></div>
+        <div class="transfer-actions"><button id="export-json" class="allocator-secondary" type="button">匯出 JSON</button><button id="export-csv" class="allocator-secondary" type="button">匯出建議 CSV</button><label class="file-button">匯入 JSON<input id="import-json" type="file" accept="application/json,.json" /></label></div>
+        <p id="transfer-message" class="allocator-message" role="alert" hidden></p>
+      </section>
     </main>
     <script type="module" src="/src/ui/allocator.ts"></script>
   </body>
