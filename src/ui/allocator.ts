@@ -47,6 +47,7 @@ const csvFieldNames: Record<CsvField, string> = {
   checkOut: '退房日',
   guestCount: '人數',
   title: '稱謂',
+  status: '狀態',
   ignore: '忽略',
 };
 
@@ -470,8 +471,14 @@ function applyGender(guestId: string, gender: Gender): void {
   focusNextUnconfirmed(guestId);
 }
 
-function addCsvDrafts(drafts: readonly CsvBookingDraft[]): void {
+function addCsvDrafts(drafts: readonly CsvBookingDraft[]): number {
+  let skipped = 0;
   for (const draft of drafts) {
+    if (draft.inactive) {
+      // 已取消 / No-show：留喺 Sheet 做紀錄，但唔使排房。
+      skipped += 1;
+      continue;
+    }
     validateBookingInput(draft.reference, draft.checkIn, draft.checkOut, draft.guestCount);
     createBooking(
       draft.reference,
@@ -485,6 +492,22 @@ function addCsvDrafts(drafts: readonly CsvBookingDraft[]): void {
     );
   }
   renderBookings();
+  return skipped;
+}
+
+/**
+ * Matches a CSV header against SplitBed's own recommended column names so the
+ * suggested booking sheet imports without 15 manual dropdowns. Anything else
+ * stays on 「忽略」 and is mapped by hand — no PMS format is hard-coded.
+ */
+function autoMatchField(header: string): CsvField {
+  const trimmed = header.trim();
+  for (const field of Object.keys(csvFieldNames) as CsvField[]) {
+    if (field !== 'ignore' && csvFieldNames[field] === trimmed) {
+      return field;
+    }
+  }
+  return 'ignore';
 }
 
 function renderCsvMapping(csv: ParsedCsv): void {
@@ -497,11 +520,14 @@ function renderCsvMapping(csv: ParsedCsv): void {
     const select = document.createElement('select');
     select.className = 'csv-field-select';
     select.dataset.columnIndex = `${index}`;
+    // 只認 SplitBed 自己建議嘅欄名（見 docs/07-booking-sheet.md）。
+    // 唔會估其他 PMS 嘅格式 —— 對唔上就照樣留返「忽略」等人手揀。
+    const autoField = autoMatchField(header);
     for (const field of Object.keys(csvFieldNames) as CsvField[]) {
       const option = document.createElement('option');
       option.value = field;
       option.textContent = csvFieldNames[field];
-      if (field === 'ignore') option.selected = true;
+      if (field === autoField) option.selected = true;
       select.append(option);
     }
     row.append(name, select);
@@ -962,8 +988,15 @@ importCsvButton.addEventListener('click', () => {
     const mapping = [...csvMapping.querySelectorAll<HTMLSelectElement>('.csv-field-select')]
       .sort((left, right) => Number(left.dataset.columnIndex) - Number(right.dataset.columnIndex))
       .map((select) => select.value as CsvField);
-    addCsvDrafts(mapCsvBookings(parsedCsv, mapping));
-    clearMessage(inputMessage);
+    const skipped = addCsvDrafts(mapCsvBookings(parsedCsv, mapping));
+    if (skipped > 0) {
+      showMessage(
+        inputMessage,
+        `已匯入。當中 ${skipped} 張已取消／No-show 訂單唔會排房。`,
+      );
+    } else {
+      clearMessage(inputMessage);
+    }
   } catch (error) {
     showMessage(inputMessage, error instanceof Error ? error.message : '未能匯入 CSV。');
   }

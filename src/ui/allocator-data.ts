@@ -14,6 +14,7 @@ export type CsvField =
   | 'checkOut'
   | 'guestCount'
   | 'title'
+  | 'status'
   | 'ignore';
 
 export interface ParsedCsv {
@@ -28,6 +29,8 @@ export interface CsvBookingDraft {
   guestCount: number;
   title: string;
   suggestedGender: Gender;
+  /** True for 已取消 / No-show rows: kept as a record in the sheet, not allocated. */
+  inactive: boolean;
 }
 
 export interface AllocatorGuest extends Guest {
@@ -146,7 +149,7 @@ export function mapCsvBookings(
   csv: ParsedCsv,
   mapping: readonly CsvField[],
 ): CsvBookingDraft[] {
-  const required: ReadonlyArray<Exclude<CsvField, 'title' | 'ignore'>> = [
+  const required: ReadonlyArray<Exclude<CsvField, 'title' | 'status' | 'ignore'>> = [
     'reference',
     'checkIn',
     'checkOut',
@@ -169,6 +172,7 @@ export function mapCsvBookings(
     const checkOut = mappedValue(row, mapping, 'checkOut');
     const guestCountText = mappedValue(row, mapping, 'guestCount');
     const title = mappedValue(row, mapping, 'title');
+    const status = mappedValue(row, mapping, 'status');
     const guestCount = Number(guestCountText);
     const displayRow = rowIndex + 2;
     if (reference === '') {
@@ -187,6 +191,7 @@ export function mapCsvBookings(
       guestCount,
       title,
       suggestedGender: genderFromTitle(title),
+      inactive: isInactiveStatus(status),
     };
   });
 }
@@ -393,6 +398,25 @@ export function generatePlacementReason(input: PlacementReasonInput): string {
     return `Room ${input.roomCode} 本身空置，安排後會住 ${finalGuests}/${input.capacity} 位客${emptyRoomText}。`;
   }
   return `Room ${input.roomCode} 有足夠床位容納整張訂單，安排後會住 ${finalGuests}/${input.capacity} 位客${emptyRoomText}。`;
+}
+
+/**
+ * Recognises the 狀態 values that mean a booking needs no room. The sheet keeps
+ * cancelled rows on purpose (see docs/07-booking-sheet.md §5); the allocator
+ * simply does not schedule them.
+ */
+export function isInactiveStatus(status: string): boolean {
+  const value = status.trim().toLowerCase();
+  return (
+    value === '已取消' ||
+    value === '取消' ||
+    value === 'cancelled' ||
+    value === 'canceled' ||
+    value === 'no-show' ||
+    value === 'noshow' ||
+    value === 'no show' ||
+    value === '未出現'
+  );
 }
 
 export function loadAllocatorState(): AllocatorFileData | null {

@@ -56,5 +56,5 @@ button?.addEventListener('click', () => {
     status.textContent = '你嘅瀏覽器封鎖咗本機儲存，請喺模擬器度自己輸入呢組房型。';
     return;
   }
-  window.location.href = './index.html';
+  window.location.href = './simulator.html';
 });

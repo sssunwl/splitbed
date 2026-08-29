@@ -49,8 +49,9 @@ export function mountNav(): void {
       <nav class="site-nav" aria-label="主要導覽">
         <a class="brand" href="./index.html">SplitBed</a>
         <ul class="nav-links">
-          <li><a href="./index.html">What-if 模擬器</a></li>
-          <li><a href="./allocator.html">排房小工具</a></li>
+          <li><a href="./index.html">介紹</a></li>
+          <li><a href="./simulator.html">收入試算</a></li>
+          <li><a href="./allocator.html">每日排房</a></li>
           <li><a href="./guide.html">使用說明</a></li>
         </ul>
         <button class="theme-toggle" type="button" aria-label="切換深色或淺色模式"></button>

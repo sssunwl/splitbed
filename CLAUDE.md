@@ -27,6 +27,7 @@ Shared Accommodation Allocation Platform。母品牌 Split，SplitBed 是第一�
 - `docs/04-web-app-scope.md` — 網頁小程式範圍 + `/guide` 說明頁的六節內容
 - `docs/05-sapporo-baseline.md` — 「札幌改 Mixed 一季多賺幾多」的參考答案，同時是 WP-3 驗收基準
 - `docs/06-multi-tenancy-and-ingestion.md` — 多租戶（每客戶一個 D1）、Cloudflare 決定、訂單匯入策略
+- `docs/07-booking-sheet.md` — 訂單記錄表設計 + 接落真正訂單系統嘅三階段路線（範例檔喺 `examples/`）
 
 > **只在本機、不在 public repo** 的檔案（見 `.gitignore`）：
 > `docs/05-sapporo-baseline.md`、`docs/06-multi-tenancy-and-ingestion.md`、`handoff/`。

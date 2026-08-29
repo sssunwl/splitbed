@@ -1,0 +1,371 @@
+/* 桌面／iPad 優先：大螢幕用兩欄，細螢幕先跌返單欄 */
+.landing {
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+.landing-hero {
+  display: grid;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  .landing-hero {
+    grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 0.85fr);
+    gap: 3rem;
+    align-items: center;
+  }
+}
+
+.landing-hero h1 {
+  margin: 0.5rem 0 1rem;
+  font-size: clamp(1.9rem, 4.2vw, 3.1rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.hero-lead {
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: 1.8;
+  color: var(--color-muted);
+  max-width: 34rem;
+}
+
+.hero-lead strong {
+  color: var(--color-text);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.75rem 0 0.9rem;
+}
+
+/* landing 頁唔載入 home.css，所以喺度自己定義掣嘅樣式，
+   數值同 home.css 一致，改嗰邊記得改埋呢邊。 */
+.landing .primary-button,
+.landing .secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.65rem;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.landing .primary-button {
+  min-width: 10rem;
+  padding: 0.9rem 1.4rem;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent-text);
+  background: var(--color-accent);
+  font-weight: 800;
+}
+
+.landing .secondary-button {
+  padding: 0.9rem 1.2rem;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  background: var(--color-surface);
+  font-weight: 600;
+}
+
+.landing .primary-button:hover,
+.landing .primary-button:focus-visible,
+.landing .secondary-button:hover,
+.landing .secondary-button:focus-visible {
+  border-color: var(--color-accent);
+}
+
+.hero-note {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.92rem;
+}
+
+/* 數字卡 */
+.hero-stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  padding: 1.75rem;
+}
+
+.stat-kicker {
+  margin: 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.stat-big {
+  margin: 0.4rem 0 0.2rem;
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: var(--color-accent);
+  line-height: 1.1;
+}
+
+.stat-sub {
+  margin: 0 0 1.25rem;
+  color: var(--color-muted);
+}
+
+.stat-rows {
+  margin: 0;
+  display: grid;
+  gap: 0.55rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+}
+
+.stat-rows > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.stat-rows dt {
+  color: var(--color-muted);
+  font-size: 0.92rem;
+}
+
+.stat-rows dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.stat-foot {
+  margin: 1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+/* 區段 */
+.landing-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.section-kicker {
+  margin: 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.landing-section h2 {
+  margin: 0.4rem 0 1rem;
+  font-size: clamp(1.4rem, 2.8vw, 2rem);
+  line-height: 1.35;
+}
+
+.section-lead {
+  margin: 0 0 1.5rem;
+  max-width: 46rem;
+  line-height: 1.8;
+  color: var(--color-muted);
+}
+
+.section-lead strong {
+  color: var(--color-text);
+}
+
+/* 問題區 */
+.problem-grid {
+  display: grid;
+  gap: 1.75rem;
+}
+
+@media (min-width: 56rem) {
+  .problem-grid {
+    grid-template-columns: minmax(18rem, 0.85fr) minmax(0, 1.15fr);
+    gap: 2.5rem;
+    align-items: start;
+  }
+}
+
+.scenario-box {
+  margin: 0;
+  padding: 1.35rem 1.5rem;
+  border-left: 4px solid var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  border-radius: 0 0.75rem 0.75rem 0;
+}
+
+.scenario-box p {
+  margin: 0 0 0.5rem;
+  line-height: 1.7;
+  font-size: 1.02rem;
+}
+
+.scenario-box p:last-child {
+  margin-bottom: 0;
+}
+
+.problem-copy p {
+  line-height: 1.85;
+  margin: 0 0 1rem;
+}
+
+.problem-copy .emphasis {
+  margin-bottom: 0;
+  padding: 1rem 1.15rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 0.7rem;
+}
+
+/* 六個做法 */
+.how-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 48rem) {
+  .how-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 72rem) {
+  .how-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.how-grid li {
+  border: 1px solid var(--color-border);
+  border-radius: 0.8rem;
+  padding: 1.25rem;
+  background: var(--color-background);
+}
+
+.how-num {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+}
+
+.how-grid h3 {
+  margin: 0.4rem 0 0.5rem;
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+.how-grid p {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.how-foot {
+  margin: 1.5rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+  line-height: 1.8;
+}
+
+/* 兩個工具 */
+.tool-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 48rem) {
+  .tool-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.tool-card {
+  display: block;
+  border: 1px solid var(--color-border);
+  border-radius: 0.9rem;
+  padding: 1.5rem;
+  background: var(--color-background);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.tool-card:hover,
+.tool-card:focus-visible {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+}
+
+.tool-card h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+}
+
+.tool-when {
+  margin: 0 0 0.9rem;
+  font-size: 0.85rem;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.tool-card p {
+  line-height: 1.75;
+  color: var(--color-muted);
+}
+
+.tool-cta {
+  margin: 1rem 0 0;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* 限制 */
+.limits {
+  border-style: dashed;
+}
+
+.limit-list {
+  margin: 0;
+  padding-left: 1.3rem;
+  display: grid;
+  gap: 0.6rem;
+  line-height: 1.75;
+}
+
+.limit-foot {
+  margin: 1.25rem 0 0;
+  color: var(--color-muted);
+  line-height: 1.75;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tool-card {
+    transition: none;
+  }
+
+  .tool-card:hover,
+  .tool-card:focus-visible {
+    transform: none;
+  }
+}

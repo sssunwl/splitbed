@@ -603,3 +603,18 @@
     text-align: center;
   }
 }
+
+
+/* ── 桌面／iPad 版面（2026-08-29）───────────────────────────
+   排房頁資訊多，大螢幕唔應該迫成一條窄柱。 */
+@media (min-width: 60rem) {
+  .allocator-main {
+    width: min(100% - 3rem, 84rem);
+  }
+}
+
+@media (min-width: 90rem) {
+  .allocator-main {
+    width: min(100% - 4rem, 96rem);
+  }
+}

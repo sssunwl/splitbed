@@ -8,6 +8,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(import.meta.dirname, 'index.html'),
+        simulator: resolve(import.meta.dirname, 'simulator.html'),
         allocator: resolve(import.meta.dirname, 'allocator.html'),
         guide: resolve(import.meta.dirname, 'guide.html'),
       },
