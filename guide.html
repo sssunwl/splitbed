@@ -3,15 +3,264 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="SplitBed 使用說明" />
+    <meta name="description" content="SplitBed 使用說明：解決咩問題、點用、已經考慮到同未考慮到嘅情況" />
     <title>使用說明｜SplitBed</title>
     <link rel="stylesheet" href="/src/ui/shared.css" />
+    <link rel="stylesheet" href="/src/ui/guide.css" />
   </head>
   <body>
     <div id="site-nav"></div>
-    <main>
-      <h1>使用說明</h1>
-      <p>了解 SplitBed 可以處理的住宿情境、使用方式與目前範圍。</p>
+    <main class="guide-main">
+      <header class="guide-hero">
+        <p class="eyebrow">使用說明</p>
+        <h1>SplitBed 點用，同埋佢做唔到啲乜</h1>
+        <p class="hero-copy">
+          呢一頁寫俾住宿經營者睇。睇完你會知道 SplitBed 幫到你邊樣、
+          而家做到幾多、以及有咩情況佢處理唔到。
+        </p>
+      </header>
+
+      <nav class="guide-toc" aria-labelledby="toc-heading">
+        <h2 id="toc-heading">目錄</h2>
+        <ol>
+          <li><a href="#s1">SplitBed 解決咩問題</a></li>
+          <li><a href="#s2">呢個網頁係成套系統嘅邊一部分</a></li>
+          <li><a href="#s3">點用</a></li>
+          <li><a href="#s4">已經考慮到嘅情況</a></li>
+          <li><a href="#s5">未考慮到嘅情況</a></li>
+          <li><a href="#s6">例子：札幌改男女同房，一季多賺幾多</a></li>
+        </ol>
+      </nav>
+
+      <section id="s1" class="guide-card" aria-labelledby="s1-h">
+        <p class="step-label">第一節</p>
+        <h2 id="s1-h">SplitBed 解決咩問題</h2>
+
+        <blockquote class="scenario">
+          <p>你有一間 3 床房，已經住咗 1 位女生。今晚嚟咗 2 位男生。</p>
+          <p>房間明明有 2 張空床，但你一張都賣唔出。</p>
+          <p>呢 2 張床唔係「空房」，係俾規則鎖住咗嘅床。</p>
+        </blockquote>
+
+        <p>
+          呢種情況唔會出現喺你嘅收入報表度。報表只會話你知「今晚得 8 成入住」，
+          唔會話你知嗰 2 成入面有幾多係<strong>賣唔出</strong>而唔係<strong>冇人訂</strong>。
+        </p>
+
+        <p>SplitBed 做兩件事：</p>
+        <ol class="numbered-list">
+          <li><strong>排房嘅時候，盡量少製造呢種情況。</strong>
+            同一批訂單，安排得好唔好，可以差好遠。</li>
+          <li><strong>計俾你睇，改房間規則值幾多錢。</strong>
+            唔使靠估，亦唔使真係試一季先知。</li>
+        </ol>
+
+        <p class="muted-note">
+          以札幌一間 12 床嘅旅舍計，一季（90 晚）大約會有 190 個床晚係咁樣被鎖住賣唔出。
+          詳細數字喺<a href="#s6">第六節</a>。
+        </p>
+      </section>
+
+      <section id="s2" class="guide-card" aria-labelledby="s2-h">
+        <p class="step-label">第二節</p>
+        <h2 id="s2-h">呢個網頁係成套系統嘅邊一部分</h2>
+
+        <p>SplitBed 完整嘅構想比而家呢個網頁大。下面講清楚而家有咩、之後會點。</p>
+
+        <div class="table-scroll">
+          <table class="guide-table">
+            <thead>
+              <tr><th scope="col">功能</th><th scope="col">而家</th><th scope="col">之後</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>房間 / 床位設定</td><td class="yes">有</td><td>存落雲端資料庫</td></tr>
+              <tr><td>加入訂單</td><td class="yes">有（手動、貼 CSV）</td><td>直接同 OTA 同步</td></tr>
+              <tr><td>自動排房建議</td><td class="yes">有</td><td>同一個引擎，唔會變</td></tr>
+              <tr><td>Room × 日期 月曆</td><td class="yes">有</td><td>加多人同時使用</td></tr>
+              <tr><td>人手調整 + 影響預覽</td><td class="yes">有</td><td>加改動紀錄</td></tr>
+              <tr><td>改規則值幾多錢（試算）</td><td class="yes">有</td><td>接你自己嘅歷史訂單</td></tr>
+              <tr><td>資料保存</td><td class="warn">只喺你部電腦</td><td>雲端資料庫</td></tr>
+              <tr><td>多人同時用</td><td class="no">未有</td><td>會做</td></tr>
+              <tr><td>入住 / 退房 / 房務</td><td class="no">未有</td><td>會做</td></tr>
+              <tr><td>收款 / OTA 串接</td><td class="no">未有</td><td>睇有冇人要先做</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="callout callout-warn">
+          <strong>而家所有資料只留喺你部電腦嘅瀏覽器，唔會上傳去任何伺服器。
+          清咗瀏覽器資料就會消失。重要資料請用「匯出 JSON」保存。</strong>
+        </p>
+
+        <p class="muted-note">
+          咁樣做嘅好處係：你唔使開戶口、唔使交任何資料俾我哋，就可以完整咁試。
+          代價係換部電腦就唔見咗，所以要自己匯出。
+        </p>
+      </section>
+
+      <section id="s3" class="guide-card" aria-labelledby="s3-h">
+        <p class="step-label">第三節</p>
+        <h2 id="s3-h">點用</h2>
+
+        <div class="howto">
+          <h3>情境一：我想知改男女同房值唔值</h3>
+          <ol class="numbered-list">
+            <li>去 <a href="./index.html">What-if 模擬器</a>。</li>
+            <li>喺「房間設定」入面改成你自己嘅房型同床數，勾選邊幾間房可以男女同房。</li>
+            <li>填返你自己嘅每床每晚房價，同埋一季計幾多晚。</li>
+            <li>拉「客人想訂嘅數量」滑桿到你旺季嘅水平。</li>
+            <li>撳「開始計算」。兩秒後會見到三種規則嘅收入比較。</li>
+          </ol>
+        </div>
+
+        <div class="howto">
+          <h3>情境二：我想幫今晚啲訂單排房</h3>
+          <ol class="numbered-list">
+            <li>去 <a href="./allocator.html">排房小工具</a>。</li>
+            <li>加入訂單：手動加、貼 CSV，或者撳「載入札幌範例」試下先。</li>
+            <li>逐位客人撳 <kbd>M</kbd> 男 / <kbd>F</kbd> 女 / <kbd>U</kbd> 未定。撳完會自動跳下一位。</li>
+            <li>撳「重新排房」。月曆同建議列表即刻出。</li>
+          </ol>
+          <p class="muted-note">
+            補性別呢一步冇得慳 —— 冇任何訂房平台會俾性別資料你，
+            但性別正正就係排房嘅關鍵。所以我哋做到十幾秒可以撳完一日嘅訂單。
+          </p>
+        </div>
+
+        <div class="howto">
+          <h3>情境三：我想試下加一張床有幾大分別</h3>
+          <ol class="numbered-list">
+            <li>返去 <a href="./index.html">What-if 模擬器</a>，記低而家嘅收入數字。</li>
+            <li>喺想加床嗰間房嘅「床數」加一。</li>
+            <li>再撳一次「開始計算」，比較兩個數。</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="s4" class="guide-card" aria-labelledby="s4-h">
+        <p class="step-label">第四節</p>
+        <h2 id="s4-h">已經考慮到嘅情況</h2>
+        <p>下面每一條系統都真係處理緊，唔係之後先做。</p>
+
+        <ul class="check-list">
+          <li>同一張訂單有幾位客人，可以要求佢哋<strong>必須同房</strong>。</li>
+          <li><strong>房間冇固定性別。</strong>「男女分房」嘅意思係「同一晚唔可以男女同房」，
+            而唔係「Room A 永遠係女房」。房間一旦住空，即刻回復可男可女。
+            真正永久指定嘅，只有你自己設定嘅「女性專用房 / 男性專用房」。</li>
+          <li>但要留意：<strong>只要房內仲有一個人未退房，就解唔到鎖。</strong>
+            一位住 14 晚嘅女客佔住 4 床房，會令另外 3 張床被鎖成女性專用整整 14 晚。
+            系統會盡量把長住客集中，就係為咗減少呢種情況。</li>
+          <li>混性別嘅情侶／朋友：喺男女分房政策下，結構上冇可能同房。
+            系統會標示「被迫拆房」，唔會靜靜地拆完當冇事發生。</li>
+          <li>性別未填嘅客人：只會安排到<strong>仲未鎖定性別</strong>嘅房，
+            而佢自己亦唔會令嗰間房鎖定性別。</li>
+          <li>女性專用房、男性專用房、私人房（成間房只賣俾同一張訂單）、
+            員工房、維修中嘅房間，全部支援。</li>
+          <li>某張床壞咗要停用，<strong>可以設停用日期區間</strong>，容量會自動減少，
+            唔使改成間房。修好之後容量自動返嚟。</li>
+          <li>同一張訂單入面，個別客人早退或者晚到。</li>
+          <li>已經入住嘅客人<strong>唔會被自動搬房</strong>。</li>
+          <li>越接近入住日，系統越唔願意改動已有安排。</li>
+          <li>重新計算嘅時候會盡量維持現有安排，
+            <strong>唔會每次都俾你一份大搬風建議</strong>。</li>
+          <li>安排唔到嘅時候，會話你知係邊一條規則卡住
+            （性別 / 容量 / 必須同房 / 私人房），而唔係淨係寫「失敗」。</li>
+          <li>長住客會盡量集中，避免把整季嘅房間切到碎晒。</li>
+          <li>唔會為咗一個人開一間新房，除非真係冇得揀。</li>
+        </ul>
+      </section>
+
+      <section id="s5" class="guide-card" aria-labelledby="s5-h">
+        <p class="step-label">第五節</p>
+        <h2 id="s5-h">未考慮到嘅情況</h2>
+        <p class="lead-note">
+          呢一節同上面一節一樣重要。以下係 SplitBed <strong>而家做唔到</strong>嘅嘢，
+          冇淡化、冇當成「即將推出」。
+        </p>
+
+        <ul class="cross-list">
+          <li><strong>中途換房。</strong>一位客人由入住到退房都住同一間房。
+            如果你嘅營運需要中途調房，而家做唔到。</li>
+          <li><strong>邊一張床。</strong>系統排到「邊間房」為止，
+            具體邊張床（上格定下格、邊個位）由你自己決定。</li>
+          <li><strong>房價浮動。</strong>計算假設每張床每晚同價，
+            冇考慮淡旺季調價、長住折扣、或者按房型定價。</li>
+          <li><strong>客人嘅社交偏好。</strong>打鼻鼾、早起、想要安靜房 ——
+            系統完全唔知道，亦唔會處理。</li>
+          <li><strong>改成男女同房之後可能流失嘅客人。</strong>
+            部分女性客人會因此唔訂、評分可能下跌、某啲平台嘅篩選條件會失效。
+            呢啲模型計唔到，只可以靠真實測試。<strong>所以第六節個數字係樂觀嘅上限，唔係承諾。</strong></li>
+          <li><strong>試算用嘅係一般旅舍嘅需求假設，唔係你自己嘅歷史訂單。</strong>
+            要準確嘅答案，最終要拿你自己嘅訂單資料重跑一次。</li>
+        </ul>
+      </section>
+
+      <section id="s6" class="guide-card" aria-labelledby="s6-h">
+        <p class="step-label">第六節</p>
+        <h2 id="s6-h">例子：札幌改男女同房，一季多賺幾多</h2>
+
+        <p>
+          用一間札幌旅舍嘅真實房型做例子：Room A 2 床、Room B 4 床、Room C 3 床、Room D 3 床，
+          合共 12 床。一季 90 晚，每床每晚 ¥5,000，客人想訂嘅數量啱啱等於總容量。
+          模擬咗 200 次，三種規則每次都收到<strong>完全相同</strong>嘅訂單。
+        </p>
+
+        <div class="table-scroll">
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th scope="col">規則</th><th scope="col">入住率</th>
+                <th scope="col">一季收入</th><th scope="col">比男女分房多賺</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>男女分房</td><td>62.4%</td><td>¥3,367,425</td><td class="muted-cell">基準</td></tr>
+              <tr><td>只開一間房（Room B）</td><td>65.2%</td><td>¥3,522,250</td><td class="gain">+¥154,825</td></tr>
+              <tr><td><strong>全面開放</strong></td><td><strong>67.1%</strong></td><td><strong>¥3,621,125</strong></td><td class="gain"><strong>+¥253,700</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>錢以外仲有兩樣嘢會變，但唔會出現喺收入報表：</p>
+
+        <div class="table-scroll">
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th scope="col">規則</th>
+                <th scope="col">被鎖住賣唔出嘅床晚</th>
+                <th scope="col">被逼拆開睡嘅訂單</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>男女分房</td><td>191.9</td><td>20.2 張</td></tr>
+              <tr><td>只開一間房（Room B）</td><td>93.0</td><td>16.8 張</td></tr>
+              <tr><td><strong>全面開放</strong></td><td><strong>0</strong></td><td><strong>12.5 張</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="muted-note">
+          「被鎖住賣唔出嘅床晚」全面開放係 <strong>0</strong>，唔係啱啱好 ——
+          冇規則可以鎖佢，定義上就係零。<br />
+          「被逼拆開睡嘅訂單」由 20.2 張跌到 12.5 張，即係少咗七、八對情侶或者朋友被逼分開瞓。
+          呢樣嘢唔會出現喺營收數字，但會出現喺評語入面。
+        </p>
+
+        <p class="highlight-note">
+          留意「只開一間房」已經攞到全面開放<strong>六成</strong>嘅好處。
+          如果你想試水溫，開一間 4 人房已經好值。
+        </p>
+
+        <p class="callout callout-warn">
+          呢個係模擬結果，用嘅係一般旅舍嘅需求分佈，唔係任何一間旅舍嘅真實訂單。
+          房價 ¥5,000 亦都係假設值。而且模擬計唔到改規則之後可能流失嘅客人。
+          要準確嘅答案，請喺首頁輸入你自己嘅房型同房價重新計一次。
+        </p>
+
+        <button id="load-example" class="primary-button" type="button">用呢組設定去試算</button>
+        <p id="load-example-status" class="muted-note" role="status" aria-live="polite"></p>
+      </section>
     </main>
     <script type="module" src="/src/ui/guide.ts"></script>
   </body>

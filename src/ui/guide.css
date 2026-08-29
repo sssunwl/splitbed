@@ -1,0 +1,229 @@
+.guide-main {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.guide-hero h1 {
+  margin: 0.25rem 0 0.75rem;
+  font-size: clamp(1.75rem, 4.5vw, 2.5rem);
+  line-height: 1.25;
+}
+
+.guide-toc {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.9rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.guide-toc h2 {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.guide-toc ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.guide-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.9rem;
+  padding: 1.5rem;
+  scroll-margin-top: 1rem;
+}
+
+.guide-card h2 {
+  margin: 0.15rem 0 1rem;
+  font-size: clamp(1.25rem, 3vw, 1.6rem);
+}
+
+.guide-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.guide-card p {
+  line-height: 1.75;
+}
+
+/* 第一節嘅開場情境 */
+.scenario {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  border-radius: 0 0.6rem 0.6rem 0;
+}
+
+.scenario p {
+  margin: 0 0 0.4rem;
+  font-size: 1.05rem;
+}
+
+.scenario p:last-child {
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+.numbered-list,
+.check-list,
+.cross-list {
+  line-height: 1.75;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.numbered-list {
+  padding-left: 1.3rem;
+}
+
+.check-list,
+.cross-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.check-list li,
+.cross-list li {
+  padding-left: 1.75rem;
+  position: relative;
+}
+
+.check-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.cross-list li::before {
+  content: '✕';
+  position: absolute;
+  left: 0;
+  color: var(--color-muted);
+  font-weight: 700;
+}
+
+.howto {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.15rem;
+  margin-top: 1.15rem;
+}
+
+.howto:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+kbd {
+  font: inherit;
+  font-size: 0.85em;
+  padding: 0.1em 0.45em;
+  border: 1px solid var(--color-border);
+  border-bottom-width: 2px;
+  border-radius: 0.35em;
+  background: var(--color-background);
+}
+
+/* 表格：自己捲動，唔會令成頁橫向捲動 */
+.table-scroll {
+  overflow-x: auto;
+  margin: 1rem 0;
+  border: 1px solid var(--color-border);
+  border-radius: 0.6rem;
+}
+
+.guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 30rem;
+  font-size: 0.95rem;
+}
+
+.guide-table th,
+.guide-table td {
+  padding: 0.65rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.guide-table tbody tr:last-child th,
+.guide-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.guide-table thead th {
+  background: var(--color-background);
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.guide-table td.yes {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.guide-table td.no,
+.guide-table td.muted-cell {
+  color: var(--color-muted);
+}
+
+.guide-table td.warn {
+  font-weight: 600;
+}
+
+.guide-table td.gain {
+  font-weight: 600;
+}
+
+.callout {
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-accent);
+  border-radius: 0 0.6rem 0.6rem 0;
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+  line-height: 1.75;
+}
+
+.callout-warn {
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+
+.highlight-note {
+  padding: 0.9rem 1.15rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 0.6rem;
+}
+
+.muted-note {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.lead-note {
+  font-size: 1.02rem;
+}
+
+@media (max-width: 40rem) {
+  .guide-card {
+    padding: 1.15rem;
+  }
+
+  .guide-toc {
+    padding: 1rem 1.15rem;
+  }
+}
