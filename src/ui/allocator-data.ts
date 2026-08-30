@@ -15,6 +15,9 @@ export type CsvField =
   | 'guestCount'
   | 'title'
   | 'status'
+  | 'maleCount'
+  | 'femaleCount'
+  | 'unspecifiedCount'
   | 'ignore';
 
 export interface ParsedCsv {
@@ -29,6 +32,12 @@ export interface CsvBookingDraft {
   guestCount: number;
   title: string;
   suggestedGender: Gender;
+  /**
+   * Per-guest genders when the sheet supplies 男／女／未定 counts. Empty when the
+   * source has no gender data (every OTA export), in which case staff fill them
+   * in with the M/F/U buttons instead.
+   */
+  genders: Gender[];
   /** True for 已取消 / No-show rows: kept as a record in the sheet, not allocated. */
   inactive: boolean;
 }
@@ -149,7 +158,12 @@ export function mapCsvBookings(
   csv: ParsedCsv,
   mapping: readonly CsvField[],
 ): CsvBookingDraft[] {
-  const required: ReadonlyArray<Exclude<CsvField, 'title' | 'status' | 'ignore'>> = [
+  const required: ReadonlyArray<
+    Exclude<
+      CsvField,
+      'title' | 'status' | 'maleCount' | 'femaleCount' | 'unspecifiedCount' | 'ignore'
+    >
+  > = [
     'reference',
     'checkIn',
     'checkOut',
@@ -174,6 +188,13 @@ export function mapCsvBookings(
     const title = mappedValue(row, mapping, 'title');
     const status = mappedValue(row, mapping, 'status');
     const guestCount = Number(guestCountText);
+    const maleText = mappedValue(row, mapping, 'maleCount');
+    const femaleText = mappedValue(row, mapping, 'femaleCount');
+    const unspecifiedText = mappedValue(row, mapping, 'unspecifiedCount');
+    const hasGenderCounts =
+      mapping.includes('maleCount') ||
+      mapping.includes('femaleCount') ||
+      mapping.includes('unspecifiedCount');
     const displayRow = rowIndex + 2;
     if (reference === '') {
       throw new Error(`CSV 第 ${displayRow} 行缺少訂單編號。`);
@@ -191,6 +212,9 @@ export function mapCsvBookings(
       guestCount,
       title,
       suggestedGender: genderFromTitle(title),
+      genders: hasGenderCounts
+        ? gendersFromCounts(maleText, femaleText, unspecifiedText, guestCount, displayRow)
+        : [],
       inactive: isInactiveStatus(status),
     };
   });
@@ -405,6 +429,47 @@ export function generatePlacementReason(input: PlacementReasonInput): string {
  * cancelled rows on purpose (see docs/07-booking-sheet.md §5); the allocator
  * simply does not schedule them.
  */
+function countOf(text: string): number {
+  const trimmed = text.trim();
+  if (trimmed === '') {
+    return 0;
+  }
+  const value = Number(trimmed);
+  return Number.isInteger(value) && value >= 0 ? value : Number.NaN;
+}
+
+/**
+ * Expands 男／女／未定 counts into one gender per guest. The three counts must add
+ * up to 人數 — a mismatch means the row was typed wrong, and guessing would put a
+ * real person in the wrong room, so it throws instead.
+ */
+export function gendersFromCounts(
+  maleText: string,
+  femaleText: string,
+  unspecifiedText: string,
+  guestCount: number,
+  displayRow: number,
+): Gender[] {
+  const male = countOf(maleText);
+  const female = countOf(femaleText);
+  const unspecified = countOf(unspecifiedText);
+  if (Number.isNaN(male) || Number.isNaN(female) || Number.isNaN(unspecified)) {
+    throw new Error(`CSV 第 ${displayRow} 行的男／女／未定必須係 0 或以上嘅整數。`);
+  }
+  const total = male + female + unspecified;
+  if (total !== guestCount) {
+    throw new Error(
+      `CSV 第 ${displayRow} 行：男 ${male} ＋ 女 ${female} ＋ 未定 ${unspecified} ＝ ${total}，` +
+        `同人數 ${guestCount} 對唔上。`,
+    );
+  }
+  return [
+    ...Array<Gender>(male).fill('male'),
+    ...Array<Gender>(female).fill('female'),
+    ...Array<Gender>(unspecified).fill('unspecified'),
+  ];
+}
+
 export function isInactiveStatus(status: string): boolean {
   const value = status.trim().toLowerCase();
   return (

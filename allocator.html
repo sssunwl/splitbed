@@ -56,13 +56,15 @@
 
           <div class="csv-schema">
             <p class="csv-schema-title">
-              用呢六個欄名，貼落嚟會自動對應
-              <span class="info-dot align-start" tabindex="0" role="button" aria-describedby="tip-auto">?<span id="tip-auto" role="tooltip">欄名一模一樣先會自動對應，其餘欄會設成「忽略」。用緊其他 PMS 格式照樣貼得，只係要自己對應一次。</span></span>
+              用呢啲欄名，貼落嚟自動對應
+              <span class="info-dot align-start" tabindex="0" role="button" aria-describedby="tip-auto">?<span id="tip-auto" role="tooltip">欄名一模一樣先會自動對應，其餘欄自動設成「忽略」。用緊其他 PMS 格式照樣貼得，只係要自己對應一次。</span></span>
             </p>
+
+            <p class="csv-schema-group">必填</p>
             <ul class="csv-schema-list">
               <li>
                 <code>訂單編號</code>
-                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-ref">?<span id="tip-ref" role="tooltip">一定要用訂房平台自己嗰個編號（例如 Booking.com 嘅 Reservation number），唔好自己編 1、2、3。將來接 API 自動同步嗰陣，呢個係唯一認得返舊訂單嘅 key。官網／Walk-in 自己編就加前綴，例如 WALKIN-2027-0032。</span></span>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-ref">?<span id="tip-ref" role="tooltip">用訂房平台自己嗰個編號（例如 Booking.com 嘅 Reservation number）。自己收嘅單就加前綴，例如 DIR-2027-0001、WLK-2027-0001。<strong>唔好用 1、2、3 流水號</strong> —— 將來接 API 自動同步，呢個係唯一認得返舊訂單嘅 key。</span></span>
               </li>
               <li>
                 <code>入住日</code>
@@ -74,19 +76,45 @@
               </li>
               <li>
                 <code>人數</code>
-                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-n">?<span id="tip-n" role="tooltip">呢張訂單有幾多位客人。系統會照人數開對應數量嘅客人，等你逐個補性別。</span></span>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-n">?<span id="tip-n" role="tooltip">呢張訂單有幾多位客人。下面三個性別欄加埋要等於呢個數。</span></span>
+              </li>
+            </ul>
+
+            <p class="csv-schema-group">
+              性別：落單嗰陣記低，慳返之後逐個撳
+              <span class="info-dot align-start" tabindex="0" role="button" aria-describedby="tip-gender">?<span id="tip-gender" role="tooltip">三個欄加埋一定要等於「人數」，唔啱會即刻報錯而唔會亂估 —— 估錯就係編錯一個真人嘅房。<strong>性別唔好寫喺備註</strong>，寫喺備註系統讀唔到。OTA 訂單通常冇性別，就三個都留空，貼完再喺下面撳 M／F／U。</span></span>
+            </p>
+            <ul class="csv-schema-list">
+              <li>
+                <code>男</code>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-m">?<span id="tip-m" role="tooltip">呢張訂單有幾多位男客。冇就填 0 或者留空。</span></span>
+              </li>
+              <li>
+                <code>女</code>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-f">?<span id="tip-f" role="tooltip">呢張訂單有幾多位女客。冇就填 0 或者留空。</span></span>
+              </li>
+              <li>
+                <code>未定</code>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-u">?<span id="tip-u" role="tooltip">未問到、或者客人唔想講。<strong>唔知就填未定，唔好靠估。</strong>未定嘅客人只會安排到仲未鎖定性別嘅房，佢自己亦唔會令嗰間房鎖定性別。</span></span>
+              </li>
+            </ul>
+
+            <p class="csv-schema-group">選填</p>
+            <ul class="csv-schema-list">
+              <li>
+                <code>狀態</code>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-status">?<span id="tip-status" role="tooltip">確認／已取消／No-show。已取消同 No-show 會自動略過，唔會佔房。<strong>唔好刪走佢哋</strong> —— 留低你先知自己嘅取消率，將來計 overbooking 要用。</span></span>
               </li>
               <li>
                 <code>稱謂</code>
-                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-title">?<span id="tip-title" role="tooltip">Mr／Ms／Mrs。<strong>呢個係唯一可靠嘅性別預填來源</strong>，因為係客人自己填。系統仍然會要你確認。<strong>唔會用姓名去猜性別</strong> —— 國際客人最易猜錯，而錯咗係編錯一個真人嘅房。</span></span>
-              </li>
-              <li>
-                <code>狀態</code>
-                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-status">?<span id="tip-status" role="tooltip">確認／已取消／No-show。已取消同 No-show 嘅行會自動略過，唔會佔房。<strong>唔好刪走佢哋</strong> —— 留低你先知自己嘅取消率，將來計 overbooking 要用。</span></span>
+                <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-title">?<span id="tip-title" role="tooltip">Mr／Ms／Mrs。只有喺冇填上面三個性別欄嗰陣先用，會預填第一位客人嘅性別俾你確認。<strong>系統唔會用姓名去猜性別</strong> —— 國際客人最易猜錯。</span></span>
               </li>
             </ul>
+
             <p class="csv-schema-foot">
-              <a href="./examples/splitbed-orders-example.csv" download>下載範例訂單表</a>
+              <a href="./examples/splitbed-orders-example.csv" download>下載訂單記錄表範例</a>
+              <span class="dim">·</span>
+              <a href="./examples/splitbed-guests-example.csv" download>逐位客人版</a>
               <span class="dim">·</span>
               <a href="./guide.html#s3">完整欄目設計</a>
             </p>

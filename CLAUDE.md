@@ -38,5 +38,11 @@ Shared Accommodation Allocation Platform。母品牌 Split，SplitBed 是第一�
 - `reference/` — 一次性審查腳本，非產品程式碼
 
 ## 現況
-2026-08-28 開案。WP-0（骨架）+ WP-1（types/policy/capacity）已派給 Codex，
-派工單在 `handoff/dispatch-wp0-wp1.md`。repo 仍是空的，WP-0 會是第一個 commit。
+2026-08-28 開案。
+
+### 2026-08-29
+
+- Phase 1 的 WP-0～WP-6 已全部完成並推送 `main`：Vite／TypeScript 骨架、domain／capacity／policy、貪心加決定性局部搜尋排房引擎、需求模擬與 policy 比較、What-if 試算、每日排房工具及使用說明頁。
+- 修正取消／no-show 訂單不參與排房；模擬結果與札幌基線偏差低於 2.5%。首頁改為產品介紹，試算獨立成頁，並加入訂單記錄表範例、匯入欄目說明及 `docs/08-brand.md` 視覺規範。
+- 驗證：`npm test -- --run` 共 11 個 test files、109 tests 全數通過；`npm run build` 成功。工作樹乾淨，`main` 與 `origin/main` 同步。
+- 下一步：用 GitHub Pages 做手機／桌面實機驗收，請未看過專案的住宿經營者完成「設定房型 → 看懂 Mixed 收益 → 排完一晚訂單」全流程；依回饋修正 Phase 1 後，再決定是否啟動 Phase 2 帳號版。

@@ -709,3 +709,15 @@
 .allocator-secondary:hover {
   border-color: var(--color-accent);
 }
+
+.csv-schema-group {
+  margin: 0.85rem 0 0.4rem;
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.csv-schema-group:first-of-type {
+  margin-top: 0.2rem;
+}

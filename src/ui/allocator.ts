@@ -48,6 +48,9 @@ const csvFieldNames: Record<CsvField, string> = {
   guestCount: '人數',
   title: '稱謂',
   status: '狀態',
+  maleCount: '男',
+  femaleCount: '女',
+  unspecifiedCount: '未定',
   ignore: '忽略',
 };
 
@@ -331,6 +334,7 @@ function createBooking(
   mustStayTogether: boolean,
   notes: string,
   suggestedGender: Gender = 'unspecified',
+  genders: readonly Gender[] = [],
 ): string {
   const bookingId = nextId('booking');
   bookings.push({
@@ -351,13 +355,15 @@ function createBooking(
     priority: 0,
     notes,
   });
+  // 表上有男／女／未定就照跟，唔使再撳一次；冇就淨係用稱謂做第一位嘅預填。
+  const fromSheet = genders.length === guestCount;
   for (let index = 0; index < guestCount; index += 1) {
     guests.push({
       id: nextId('guest'),
       bookingId,
       name: '',
-      gender: index === 0 ? suggestedGender : 'unspecified',
-      genderConfirmed: false,
+      gender: fromSheet ? genders[index] : index === 0 ? suggestedGender : 'unspecified',
+      genderConfirmed: fromSheet && genders[index] !== 'unspecified',
       birthYear: null,
       accessibilityNeed: false,
       checkIn,
@@ -489,6 +495,7 @@ function addCsvDrafts(drafts: readonly CsvBookingDraft[]): number {
       true,
       '',
       draft.suggestedGender,
+      draft.genders,
     );
   }
   renderBookings();
