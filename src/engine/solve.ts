@@ -335,7 +335,11 @@ export function solve(problem: AllocationProblem, options: SolveOptions): SolveR
       continue;
     }
 
-    if (!booking.mustStayTogether) {
+    // 「盡量同房」係偏好，唔係硬性要求：整組放唔落就拆開安排，
+    // 由 forcedSplitBookingIds 標示出嚟，唔會靜靜地拒單。
+    // 真係一定要同房嘅，用 requiresPrivateRoom。
+    // （模擬器嘅 replay 本來就係咁做，呢度對齊返。）
+    {
       const individuallyPlaced: Guest[] = [];
       let allPlaced = true;
       for (const guest of movableGuests) {

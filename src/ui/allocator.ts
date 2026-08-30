@@ -336,6 +336,7 @@ function createBooking(
   notes: string,
   suggestedGender: Gender = 'unspecified',
   genders: readonly Gender[] = [],
+  requiresPrivateRoom = false,
 ): string {
   const bookingId = nextId('booking');
   bookings.push({
@@ -352,7 +353,7 @@ function createBooking(
     totalValue: guestCount * diffDays(checkIn, checkOut) * siteConfig.nightlyRate,
     currency: 'JPY',
     mustStayTogether,
-    requiresPrivateRoom: false,
+    requiresPrivateRoom,
     priority: 0,
     notes,
   });
@@ -971,32 +972,47 @@ manualForm.addEventListener('submit', (event) => {
   }
 });
 
-/** 示範資料：性別已填好，所以撳完可以即刻排房，唔使先逐個撳。 */
-const DEMO_BOOKINGS: ReadonlyArray<
-  readonly [string, string, string, boolean, readonly Gender[]]
-> = [
-  // 情侶：盡量同房，但男女分房之下可能要分開 —— 呢個正正係要俾人睇到嘅情況
-  ['DEMO-01', '2026-02-01', '2026-02-05', false, ['male', 'female']],
-  ['DEMO-02', '2026-02-01', '2026-02-04', true, ['male']],
-  ['DEMO-03', '2026-02-02', '2026-02-08', true, ['male', 'male', 'male']],
-  ['DEMO-04', '2026-02-04', '2026-02-07', true, ['female', 'female']],
-  ['DEMO-05', '2026-02-05', '2026-02-12', true, ['female']],
-  ['DEMO-06', '2026-02-06', '2026-02-07', true, ['unspecified']],
+/**
+ * 示範資料 ＝ 可下載嗰份訂單記錄表（public/examples/splitbed-orders-example.csv）
+ * 入面 12 張有效訂單。兩張已取消／No-show 唔會出現，同匯入行為一致。
+ * 性別已經填好，所以撳完可以即刻排房。
+ */
+const DEMO_BOOKINGS: ReadonlyArray<{
+  readonly ref: string;
+  readonly from: string;
+  readonly to: string;
+  readonly genders: readonly Gender[];
+  readonly together: boolean;
+  readonly privateRoom?: boolean;
+}> = [
+  { ref: 'DIR-2027-0001', from: '2027-02-01', to: '2027-02-05', genders: ['male', 'male'], together: true },
+  { ref: 'BKG-4471932', from: '2027-02-01', to: '2027-02-04', genders: ['female'], together: true },
+  { ref: 'DIR-2027-0002', from: '2027-02-02', to: '2027-02-08', genders: ['male', 'male', 'male'], together: true },
+  { ref: 'DIR-2027-0003', from: '2027-02-04', to: '2027-02-07', genders: ['male', 'female'], together: true },
+  { ref: 'AGD-88120455', from: '2027-02-05', to: '2027-02-06', genders: ['female'], together: true },
+  { ref: 'DIR-2027-0004', from: '2027-02-05', to: '2027-02-19', genders: ['male'], together: true },
+  { ref: 'BKG-4478821', from: '2027-02-06', to: '2027-02-09', genders: ['female', 'female', 'female', 'female'], together: true },
+  { ref: 'WLK-2027-0001', from: '2027-02-06', to: '2027-02-07', genders: ['unspecified'], together: true },
+  { ref: 'AGD-88134902', from: '2027-02-07', to: '2027-02-10', genders: ['female', 'female'], together: true },
+  { ref: 'DIR-2027-0005', from: '2027-02-08', to: '2027-02-22', genders: ['female'], together: true },
+  { ref: 'EXP-77401238', from: '2027-02-09', to: '2027-02-11', genders: ['male', 'male', 'unspecified'], together: false },
+  { ref: 'DIR-2027-0006', from: '2027-02-10', to: '2027-02-13', genders: ['male', 'female'], together: true, privateRoom: true },
 ];
 
 function loadDemoBookings(): void {
   const batch = bookings.length + 1;
-  for (const [reference, checkIn, checkOut, together, genders] of DEMO_BOOKINGS) {
+  for (const demo of DEMO_BOOKINGS) {
     createBooking(
-      `${reference}-${batch}`,
-      checkIn,
-      checkOut,
-      genders.length,
+      batch === 1 ? demo.ref : `${demo.ref}-${batch}`,
+      demo.from,
+      demo.to,
+      demo.genders.length,
       'direct',
-      together,
+      demo.together,
       '',
       'unspecified',
-      genders,
+      demo.genders,
+      demo.privateRoom === true,
     );
   }
   renderBookings();
