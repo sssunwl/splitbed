@@ -731,3 +731,122 @@
 .allocator-main .intro-note {
   margin-top: 0.6rem;
 }
+
+.cannot-take {
+  color: var(--color-warn);
+  font-weight: 700;
+}
+
+.cannot-take-advice {
+  margin: 0.5rem 0 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.suggestion-summary {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.suggestion-summary.has-rejects {
+  color: var(--color-warn);
+}
+
+.allocator-main .intro-lead {
+  margin: 0 0 1.1rem;
+  max-width: 46rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.calc-panel > .allocator-card {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  border-top: 1px solid var(--color-border);
+  box-shadow: none;
+}
+
+.calc-panel > .allocator-card:first-of-type {
+  border-top: 0;
+}
+
+/* 引言區同試算頁一致（呢頁唔載入 home.css，所以喺度自己定義） */
+.allocator-main .intro-block {
+  margin-bottom: 1.25rem;
+  padding: 1.35rem 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.allocator-main .intro-block h2 {
+  margin: 0.25rem 0 0.85rem;
+  font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+}
+
+.allocator-main .step-label {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.allocator-main .calc-panel {
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--glow);
+  overflow: hidden;
+}
+
+.allocator-main .calc-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 1rem 1.35rem;
+  cursor: pointer;
+  list-style: none;
+  transition: background 0.16s ease;
+}
+
+.allocator-main .calc-summary::-webkit-details-marker {
+  display: none;
+}
+
+.allocator-main .calc-summary:hover {
+  background: var(--color-accent-soft);
+}
+
+.allocator-main .calc-summary-main {
+  color: var(--color-accent);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.allocator-main .calc-summary-main::after {
+  content: ' →';
+}
+
+.allocator-main .calc-panel[open] .calc-summary-main::after {
+  content: ' ↓';
+}
+
+.allocator-main .calc-summary-sub {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.allocator-main .calc-panel[open] .calc-summary {
+  border-bottom: 1px solid var(--color-border);
+}

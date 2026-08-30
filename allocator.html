@@ -14,52 +14,35 @@
       <header class="allocator-hero">
         <p class="allocator-eyebrow">每日排房工作台</p>
         <h1>今日啲客，點樣排房？</h1>
-        <p>設定房間、加入訂單、快速補齊性別，系統會提供可調整及鎖定的排房建議。所有資料只留在你部電腦。</p>
+        <p>系統會話你知邊張單收得到、點排最少浪費。資料只留喺你部電腦。</p>
       </header>
 
       <section class="intro-block" aria-labelledby="alloc-intro-h">
         <p class="step-label">先睇示範</p>
         <h2 id="alloc-intro-h">12 張單、23 位客，你會點分？</h2>
 
-        <div class="intro-grid">
-          <blockquote class="intro-scenario">
-            <p>12 張床，二月旺季。</p>
-            <p>情侶、四人女生團、兩個住成個月嘅長住客、一個 walk-in 未問到性別。</p>
-            <p><strong>邊個安排會少浪費啲？</strong></p>
-          </blockquote>
+        <p class="intro-lead">
+          人手排通常係「見邊間有位就擺邊間」。咁樣做，一個人可能就開咗一間新房，
+          而嗰間房之後成個星期都收唔到團。
+        </p>
 
-          <div class="intro-copy">
-            <p>
-              人手排通常係「見邊間有位就擺邊間」。咁樣做，一個人可能就開咗一間新房，
-              而嗰間房之後成個星期都收唔到團。
-            </p>
-            <p>
-              撳下面個掣，會即刻載入一組示範訂單、跑一次排房，
-              你可以睇到<strong>月曆、每個安排嘅理由</strong>，
-              同埋<strong>你改動之後會蝕幾多</strong>。唔使自己入單。
-            </p>
-          </div>
-        </div>
-
-        <button id="run-demo" class="primary-button demo-button" type="button">
+        <button id="run-demo" class="allocator-primary demo-button" type="button">
           載入示範訂單，即刻睇排房結果
         </button>
+
         <p class="intro-note">
-          示範用嘅係
+          用嘅係
           <a href="./examples/splitbed-orders-example.csv" download>可下載嗰份訂單記錄表</a>
-          入面同一批訂單（12 張有效單、23 位客，已取消同 No-show 嗰兩張唔會排）。
-          即係話：你下載份表、填自己啲單、貼返入嚟，見到嘅就係下面呢種結果。
-          資料只留喺你部電腦，隨時清走。
-        </p>
-        <p class="intro-note">
-          <strong>會見到有一兩張排唔到，呢個係正常嘅。</strong>
-          12 張單擠喺二月旺季得 12 張床度，本來就會有收唔到嘅。
-          重點係系統會<strong>逐間房話你知係邊條規則卡住</strong>
-          （床位不足／同房性別衝突／私人房要求衝突），
-          而唔係淨係彈一句「失敗」。你可以即刻試下喺上面開放多一間房男女同房，
-          再撳「重新排房」，睇下收唔收得返。
+          同一批訂單。你下載份表、填自己啲單、貼返入嚟，見到嘅就係同一種結果。
+          <span class="info-dot" tabindex="0" role="button" aria-describedby="tip-demo">?<span id="tip-demo" role="tooltip">示範會載入 12 張有效訂單（已取消同 No-show 嗰兩張唔會排），自動跑一次排房，然後捲到結果。<br /><br />二月旺季 12 張床本來就會有收唔到嘅單 —— 系統會逐間房話你知卡喺邊條規則，你可以即刻試開放多一間房男女同房，睇下收唔收得返。<br /><br />資料只留喺你部電腦，隨時清走。</span></span>
         </p>
       </section>
+
+      <details class="calc-panel" id="work-panel">
+        <summary class="calc-summary">
+          <span class="calc-summary-main">入自己嘅單</span>
+          <span class="calc-summary-sub">設房間、貼 CSV 或手動加、補性別</span>
+        </summary>
 
       <section class="allocator-card" aria-labelledby="allocator-rooms-heading">
         <div class="allocator-section-heading">
@@ -188,6 +171,13 @@
         <p id="solve-message" class="allocator-message" role="alert" hidden></p>
       </section>
 
+      <section class="allocator-card" aria-labelledby="transfer-heading">
+        <div class="allocator-section-heading"><div><span>05</span><h2 id="transfer-heading">匯出／匯入</h2></div></div>
+        <div class="transfer-actions"><button id="export-json" class="allocator-secondary" type="button">匯出 JSON</button><button id="export-csv" class="allocator-secondary" type="button">匯出建議 CSV</button><label class="file-button">匯入 JSON<input id="import-json" type="file" accept="application/json,.json" /></label></div>
+        <p id="transfer-message" class="allocator-message" role="alert" hidden></p>
+      </section>
+      </details>
+
       <section id="allocation-results" class="allocation-results" hidden>
         <section class="allocator-card" aria-labelledby="calendar-heading">
           <div class="allocator-section-heading"><div><span>結果 A</span><h2 id="calendar-heading">房間 Calendar</h2></div><p id="calendar-range"></p></div>
@@ -196,8 +186,8 @@
         </section>
 
         <section class="allocator-card" aria-labelledby="suggestion-heading">
-          <div class="allocator-section-heading"><div><span>結果 B</span><h2 id="suggestion-heading">建議列表</h2></div></div>
-          <div class="suggestion-scroll"><table class="suggestion-table"><thead><tr><th>訂單編號</th><th>建議房間</th><th>理由／無法安排原因</th></tr></thead><tbody id="suggestion-body"></tbody></table></div>
+          <div class="allocator-section-heading"><div><span>結果 B</span><h2 id="suggestion-heading">建議列表</h2></div><p id="suggestion-summary" class="suggestion-summary"></p></div>
+          <div class="suggestion-scroll"><table class="suggestion-table"><thead><tr><th>訂單編號</th><th>建議房間</th><th>理由／收唔到嘅原因</th></tr></thead><tbody id="suggestion-body"></tbody></table></div>
         </section>
 
         <section class="allocator-card" aria-labelledby="adjustment-heading">
@@ -212,11 +202,6 @@
         </section>
       </section>
 
-      <section class="allocator-card" aria-labelledby="transfer-heading">
-        <div class="allocator-section-heading"><div><span>05</span><h2 id="transfer-heading">匯出／匯入</h2></div></div>
-        <div class="transfer-actions"><button id="export-json" class="allocator-secondary" type="button">匯出 JSON</button><button id="export-csv" class="allocator-secondary" type="button">匯出建議 CSV</button><label class="file-button">匯入 JSON<input id="import-json" type="file" accept="application/json,.json" /></label></div>
-        <p id="transfer-message" class="allocator-message" role="alert" hidden></p>
-      </section>
     </main>
     <script type="module" src="/src/ui/allocator.ts"></script>
   </body>

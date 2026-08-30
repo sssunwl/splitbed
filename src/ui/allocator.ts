@@ -101,6 +101,7 @@ const inputMessage = requiredElement<HTMLParagraphElement>('#booking-input-messa
 const bookingList = requiredElement<HTMLDivElement>('#booking-list');
 const genderProgress = requiredElement<HTMLParagraphElement>('#gender-progress');
 const solveButton = requiredElement<HTMLButtonElement>('#solve-button');
+const suggestionSummary = requiredElement<HTMLParagraphElement>('#suggestion-summary');
 const resetSolveButton = requiredElement<HTMLButtonElement>('#reset-solve-button');
 const solveMessage = requiredElement<HTMLParagraphElement>('#solve-message');
 const results = requiredElement<HTMLElement>('#allocation-results');
@@ -683,6 +684,17 @@ function renderSuggestions(result: SolveResult): void {
   const usedRooms = new Set(result.placements.map((placement) => placement.roomId));
   const occupantsByRoomNight = occupancyIndex(result.placements);
   const emptyRoom = rooms.find((room) => !usedRooms.has(room.id));
+  // 用生意講法做總結，唔係「成功／失敗」。
+  const cannotTake = bookings.filter((booking) =>
+    result.rejectedBookingIds.includes(booking.id),
+  ).length;
+  const canTake = bookings.length - cannotTake;
+  suggestionSummary.textContent =
+    cannotTake === 0
+      ? `${bookings.length} 張單全部收得到`
+      : `${bookings.length} 張單：收得到 ${canTake} 張、收唔到 ${cannotTake} 張`;
+  suggestionSummary.classList.toggle('has-rejects', cannotTake > 0);
+
   const fragment = document.createDocumentFragment();
   for (const booking of bookings) {
     const row = document.createElement('tr');
@@ -691,7 +703,14 @@ function renderSuggestions(result: SolveResult): void {
     const reference = document.createElement('td');
     reference.textContent = booking.reference;
     const roomCell = document.createElement('td');
-    roomCell.textContent = roomCodes.length === 0 ? '未能安排' : roomCodes.map((code) => `Room ${code}`).join('、');
+    // 「未能安排」係系統角度。對經營者嚟講只有兩個意思：仲未確認就係收唔到，
+    // 已經確認就係超收咗要處理。所以直接講「收唔到」。
+    if (roomCodes.length === 0) {
+      roomCell.classList.add('cannot-take');
+      roomCell.textContent = '收唔到';
+    } else {
+      roomCell.textContent = roomCodes.map((code) => `Room ${code}`).join('、');
+    }
     const reason = document.createElement('td');
     if (result.rejectedBookingIds.includes(booking.id)) {
       const list = document.createElement('ul');
@@ -699,13 +718,23 @@ function renderSuggestions(result: SolveResult): void {
       const perRoom = new Map(
         (diagnostics.get(booking.id)?.perRoom ?? []).map((item) => [item.roomId, item.reason]),
       );
+      let genderBlocked = false;
       for (const room of rooms) {
         const item = document.createElement('li');
         const blockReason = perRoom.get(room.id);
+        if (blockReason === 'gender_conflict') {
+          genderBlocked = true;
+        }
         item.textContent = `Room ${room.code}：${blockReason === undefined ? '未能在保持整張訂單規則下完成安排' : diagnosticNames[blockReason]}`;
         list.append(item);
       }
       reason.append(list);
+      const advice = document.createElement('p');
+      advice.className = 'cannot-take-advice';
+      advice.textContent = genderBlocked
+        ? '呢張單仲未確認就唔好收；已經確認咗就即係超收咗，要退款或者另作安排。想收返呢類單，可以開放多一間房男女同房。'
+        : '呢張單仲未確認就唔好收；已經確認咗就即係超收咗，要退款或者另作安排。';
+      reason.append(advice);
     } else if (roomCodes.length > 1) {
       reason.textContent = generatePlacementReason({
         roomCode: roomCodes[0], existingGuests: 0, addedGuests: bookingGuests.length,
@@ -1024,6 +1053,8 @@ loadSampleButton.addEventListener('click', loadDemoBookings);
 // 一撳就見到成件事：載入示範、排房、捲到結果。
 // 冇人會為咗試效果而逐張單自己入。
 runDemoButton.addEventListener('click', () => {
+  // 展開工作區，等人見到示範啲單去咗邊，可以即刻改。
+  document.getElementById('work-panel')?.setAttribute('open', '');
   loadDemoBookings();
   solveAndRender();
   document.getElementById('allocation-results')?.scrollIntoView({
