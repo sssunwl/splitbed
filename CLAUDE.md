@@ -30,6 +30,7 @@ Shared Accommodation Allocation Platform。母品牌 Split，SplitBed 是第一�
 - `docs/06-multi-tenancy-and-ingestion.md` — 多租戶（每客戶一個 D1）、Cloudflare 決定、訂單匯入策略
 - `docs/07-booking-sheet.md` — 訂單記錄表設計 + 接落真正訂單系統嘅三階段路線（範例檔喺 `public/examples/`）
 - `docs/08-brand.md` — **改任何介面之前先讀**：品牌個性、色票、字級、hover、浮標用法
+- `docs/09-future-directions.md` — 抽象模式（共用＋上鎖＋時間＋成本四條件）、分房/分層/分地點嘅取捨、其他行業排序、三條擴散路線、四個最平嘅驗證實驗
 
 > **只在本機、不在 public repo** 的檔案（見 `.gitignore`）：
 > `docs/05-sapporo-baseline.md`、`docs/06-multi-tenancy-and-ingestion.md`、`handoff/`。
