@@ -92,6 +92,7 @@ const manualSource = requiredElement<HTMLSelectElement>('#manual-source');
 const manualTogether = requiredElement<HTMLInputElement>('#manual-together');
 const manualNotes = requiredElement<HTMLInputElement>('#manual-notes');
 const loadSampleButton = requiredElement<HTMLButtonElement>('#load-sample');
+const runDemoButton = requiredElement<HTMLButtonElement>('#run-demo');
 const csvText = requiredElement<HTMLTextAreaElement>('#csv-text');
 const parseCsvButton = requiredElement<HTMLButtonElement>('#parse-csv');
 const csvMapping = requiredElement<HTMLDivElement>('#csv-mapping');
@@ -363,7 +364,9 @@ function createBooking(
       bookingId,
       name: '',
       gender: fromSheet ? genders[index] : index === 0 ? suggestedGender : 'unspecified',
-      genderConfirmed: fromSheet && genders[index] !== 'unspecified',
+      // 表上明明寫咗「未定」＝職員已經決定咗「唔知」，唔使再撳多次。
+      // 只有完全冇填性別欄嗰啲（例如 OTA 訂單）先算未確認。
+      genderConfirmed: fromSheet,
       birthYear: null,
       accessibilityNeed: false,
       checkIn,
@@ -405,7 +408,7 @@ function renderBookings(): void {
     details.dataset.bookingId = booking.id;
     details.open = booking.id === expandedBookingId || bookingGuests.some((guest) => !guest.genderConfirmed);
     const summary = document.createElement('summary');
-    summary.innerHTML = `<span>${escapeHtml(booking.reference)} · ${booking.checkIn} → ${booking.checkOut}</span><small>${bookingGuests.length} 人 · ${booking.mustStayTogether ? '必須同房' : '可以拆房'}</small>`;
+    summary.innerHTML = `<span>${escapeHtml(booking.reference)} · ${booking.checkIn} → ${booking.checkOut}</span><small>${bookingGuests.length} 人 · ${booking.mustStayTogether ? '盡量同房' : '可以拆房'}</small>`;
     const list = document.createElement('div');
     list.className = 'guest-list';
     for (const [index, guest] of bookingGuests.entries()) {
@@ -706,6 +709,12 @@ function renderSuggestions(result: SolveResult): void {
       reason.textContent = generatePlacementReason({
         roomCode: roomCodes[0], existingGuests: 0, addedGuests: bookingGuests.length,
         capacity: 0, emptyRoomCode: emptyRoom?.code ?? null, splitRoomCodes: roomCodes,
+        splitByGender:
+          new Set(
+            bookingGuests
+              .map((guest) => guest.gender)
+              .filter((gender) => gender !== 'unspecified'),
+          ).size > 1,
       });
     } else {
       const roomId = placementRoomByGuest.get(bookingGuests[0]?.id ?? '');
@@ -962,21 +971,49 @@ manualForm.addEventListener('submit', (event) => {
   }
 });
 
-loadSampleButton.addEventListener('click', () => {
+/** 示範資料：性別已填好，所以撳完可以即刻排房，唔使先逐個撳。 */
+const DEMO_BOOKINGS: ReadonlyArray<
+  readonly [string, string, string, boolean, readonly Gender[]]
+> = [
+  // 情侶：盡量同房，但男女分房之下可能要分開 —— 呢個正正係要俾人睇到嘅情況
+  ['DEMO-01', '2026-02-01', '2026-02-05', false, ['male', 'female']],
+  ['DEMO-02', '2026-02-01', '2026-02-04', true, ['male']],
+  ['DEMO-03', '2026-02-02', '2026-02-08', true, ['male', 'male', 'male']],
+  ['DEMO-04', '2026-02-04', '2026-02-07', true, ['female', 'female']],
+  ['DEMO-05', '2026-02-05', '2026-02-12', true, ['female']],
+  ['DEMO-06', '2026-02-06', '2026-02-07', true, ['unspecified']],
+];
+
+function loadDemoBookings(): void {
   const batch = bookings.length + 1;
-  const samples = [
-    ['SAPPORO-A', '2026-02-01', '2026-02-05', 2, 'female'],
-    ['SAPPORO-B', '2026-02-01', '2026-02-04', 1, 'male'],
-    ['SAPPORO-C', '2026-02-02', '2026-02-08', 3, 'unspecified'],
-    ['SAPPORO-D', '2026-02-04', '2026-02-07', 2, 'male'],
-    ['SAPPORO-E', '2026-02-05', '2026-02-10', 1, 'female'],
-    ['SAPPORO-F', '2026-02-07', '2026-02-12', 1, 'unspecified'],
-  ] as const;
-  for (const [reference, checkIn, checkOut, count, gender] of samples) {
-    createBooking(`${reference}-${batch}`, checkIn, checkOut, count, 'direct', false, '', gender);
+  for (const [reference, checkIn, checkOut, together, genders] of DEMO_BOOKINGS) {
+    createBooking(
+      `${reference}-${batch}`,
+      checkIn,
+      checkOut,
+      genders.length,
+      'direct',
+      together,
+      '',
+      'unspecified',
+      genders,
+    );
   }
   renderBookings();
   clearMessage(inputMessage);
+}
+
+loadSampleButton.addEventListener('click', loadDemoBookings);
+
+// 一撳就見到成件事：載入示範、排房、捲到結果。
+// 冇人會為咗試效果而逐張單自己入。
+runDemoButton.addEventListener('click', () => {
+  loadDemoBookings();
+  solveAndRender();
+  document.getElementById('allocation-results')?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  });
 });
 
 parseCsvButton.addEventListener('click', () => {

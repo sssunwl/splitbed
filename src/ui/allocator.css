@@ -721,3 +721,13 @@
 .csv-schema-group:first-of-type {
   margin-top: 0.2rem;
 }
+
+.demo-button {
+  margin-top: 0.4rem;
+  padding: 0.85rem 1.35rem;
+  font-size: 0.98rem;
+}
+
+.allocator-main .intro-note {
+  margin-top: 0.6rem;
+}

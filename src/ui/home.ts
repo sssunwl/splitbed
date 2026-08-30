@@ -47,6 +47,7 @@ const progressBar = requiredElement<HTMLSpanElement>('#progress-bar');
 const progressText = requiredElement<HTMLParagraphElement>('#progress-text');
 const results = requiredElement<HTMLElement>('#results');
 const staleNotice = requiredElement<HTMLDivElement>('#stale-notice');
+const recalcButton = requiredElement<HTMLButtonElement>('#recalc-button');
 const conclusion = requiredElement<HTMLHeadingElement>('#result-conclusion');
 const incomeTableBody = requiredElement<HTMLTableSectionElement>('#income-table-body');
 const impactTableBody = requiredElement<HTMLTableSectionElement>('#impact-table-body');
@@ -95,6 +96,9 @@ function markResultsStale(): void {
   revision += 1;
   if (!results.hidden) {
     staleNotice.hidden = false;
+    // 舊數字唔可以繼續睇落去似答案 —— 改咗設定但數字照樣企喺度，
+    // 會令人以為「改咗都冇分別」。糊咗佢，逼人重新計算。
+    results.classList.add('is-stale');
   }
 }
 
@@ -381,7 +385,9 @@ function renderResults(
   renderChart(rows, request.siteConfig.rooms);
   renderAssumptions(request, elapsedMs);
   results.hidden = false;
-  staleNotice.hidden = calculationRevision === revision;
+  const stillStale = calculationRevision !== revision;
+  staleNotice.hidden = !stillStale;
+  results.classList.toggle('is-stale', stillStale);
   results.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -524,4 +530,10 @@ form.addEventListener('change', (event) => {
 form.addEventListener('submit', (event) => {
   event.preventDefault();
   startCalculation();
+});
+
+
+// 「用新設定重新計算」等於撳返主按鈕，唔另開一條路徑。
+recalcButton.addEventListener('click', () => {
+  calculateButton.click();
 });

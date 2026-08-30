@@ -62,6 +62,8 @@ export interface PlacementReasonInput {
   capacity: number;
   emptyRoomCode: string | null;
   splitRoomCodes?: readonly string[];
+  /** True when the group holds more than one gender and had to be split by rule, not capacity. */
+  splitByGender?: boolean;
 }
 
 const STORAGE_KEY = 'splitbed.allocator.v1';
@@ -405,7 +407,12 @@ export function validateAllocatorJson(value: unknown): AllocatorFileData {
 export function generatePlacementReason(input: PlacementReasonInput): string {
   const splitRooms = [...(input.splitRoomCodes ?? [])].sort();
   if (splitRooms.length > 1) {
-    return `訂單要分配到 ${splitRooms.map((room) => `Room ${room}`).join('、')}，因為單一房間未能容納整組客人。`;
+    const where = splitRooms.map((room) => `Room ${room}`).join('、');
+    // 講啱個原因好緊要：容量夠但性別唔夾，同真係唔夠床，係兩件事。
+    return input.splitByGender === true
+      ? `呢張訂單分咗去 ${where}。組合入面有男有女，而可用嘅房係男女分房，` +
+          `所以冇可能同房。想避免呢種情況，可以開放其中一間房男女同房。`
+      : `呢張訂單分咗去 ${where}，因為冇一間房夠位容納成組客人。`;
   }
   const finalGuests = input.existingGuests + input.addedGuests;
   const emptyRoomText =

@@ -17,6 +17,72 @@
         <p class="hero-copy">輸入你的房型，睇下改房間規則一季多賺幾多。資料只留在你部電腦。</p>
       </header>
 
+      <section class="intro-block" aria-labelledby="intro-h">
+        <p class="step-label">先講清楚</p>
+        <h2 id="intro-h">你唔係冇人訂，你係有床賣唔出</h2>
+
+        <div class="intro-grid">
+          <blockquote class="intro-scenario">
+            <p>3 床房已經住咗 1 位女生。</p>
+            <p>今晚嚟咗 2 位男生。</p>
+            <p><strong>有 2 張空床，一張都賣唔出。</strong></p>
+          </blockquote>
+
+          <div class="intro-copy">
+            <p>
+              呢種床唔會出現喺報表嘅「問題」欄。月結表只會話你「今晚 8 成入住」，
+              唔會分開講：邊啲係真係冇人訂，邊啲係<strong>有人想訂但你收唔到</strong>。
+            </p>
+            <p>
+              以一間 12 床旅舍計，一季（90 晚）大約有
+              <strong class="intro-figure">190 個床晚</strong>係咁樣蒸發。
+              以每晚 ¥5,000 計，即係接近 ¥95 萬嘅機會。
+            </p>
+          </div>
+        </div>
+
+        <p class="intro-sub">同一批訂單，淨係改房間規則，結果係咁：</p>
+
+        <div class="table-scroll" tabindex="0" aria-label="札幌例子比較表">
+          <table class="intro-table">
+            <thead>
+              <tr>
+                <th scope="col">房間規則</th>
+                <th scope="col">入住率</th>
+                <th scope="col">一季收入</th>
+                <th scope="col">賣唔出嘅床晚</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>男女分房</td><td>62.4%</td><td>¥3,367,425</td><td>192</td></tr>
+              <tr><td>只開一間房</td><td>65.2%</td><td>¥3,522,250</td><td>93</td></tr>
+              <tr class="intro-best">
+                <td><strong>全面開放</strong></td>
+                <td><strong>67.1%</strong></td>
+                <td><strong>¥3,621,125</strong></td>
+                <td><strong>0</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="intro-punch">
+          全面開放一季多賺 <strong>¥253,700</strong>，即係 <strong>+7.5%</strong>。
+          <span class="intro-dim">冇加價，冇多過一個客。</span>
+        </p>
+
+        <p class="intro-note">
+          呢個係札幌一間 12 床旅舍（2／4／3／3 床）嘅模擬結果，唔係你嘅。
+          你間旅舍嘅答案要用你自己嘅房型同房價計。
+        </p>
+      </section>
+
+      <details class="calc-panel" id="calc-panel">
+        <summary class="calc-summary">
+          <span class="calc-summary-main">立即試算你自己間旅舍</span>
+          <span class="calc-summary-sub">四步、兩秒、免註冊</span>
+        </summary>
+
       <form id="simulator-form" novalidate>
         <section class="sim-card" aria-labelledby="rooms-heading">
           <div class="section-heading">
@@ -134,9 +200,14 @@
           </div>
         </section>
       </form>
+      </details>
 
       <section id="results" class="results-section" aria-labelledby="result-conclusion" hidden>
-        <div id="stale-notice" class="stale-notice" role="status" hidden>已過時，請重新計算。</div>
+        <div id="stale-notice" class="stale-notice" role="status" hidden>
+          <span>設定改咗，下面啲數係舊嘅。</span>
+          <button id="recalc-button" class="primary-button" type="button">用新設定重新計算</button>
+        </div>
+        <div class="stale-body">
         <p class="result-kicker">模擬結果</p>
         <h2 id="result-conclusion" class="result-conclusion"></h2>
 
@@ -173,6 +244,8 @@
             </thead>
             <tbody id="impact-table-body"></tbody>
           </table>
+        </div>
+
         </div>
 
         <div class="mechanism-card">
